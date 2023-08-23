@@ -23,11 +23,12 @@ func Start() {
 	db.DBClient.AutoMigrate(new(m.SysInfo))
 	db.DBClient.AutoMigrate(new(Files))
 
+	// 加载系统信息
 	LoadSYSInfo()
 
 	srv = sip.NewServer()
-	srv.RegistHandler(sip.REGISTER, handlerRegister)
-	srv.RegistHandler(sip.MESSAGE, handlerMessage)
+	srv.RegistHandler(sip.REGISTER, handlerRegister) //处理下级设备的注册请求
+	srv.RegistHandler(sip.MESSAGE, handlerMessage)   //处理下级设备发来的消息
 	go srv.ListenUDPServer(config.UDP)
 }
 
@@ -39,7 +40,7 @@ type ActiveDevices struct {
 	sync.Map
 }
 
-// Get Get
+// 获取活跃设备
 func (a *ActiveDevices) Get(key string) (Devices, bool) {
 	if v, ok := a.Load(key); ok {
 		return v.(Devices), ok
@@ -51,6 +52,8 @@ var _activeDevices ActiveDevices
 
 // 系统运行信息
 var _sysinfo *m.SysInfo
+
+// 系统配置信息
 var config *m.Config
 
 func LoadSYSInfo() {

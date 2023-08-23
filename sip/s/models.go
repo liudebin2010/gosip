@@ -8,10 +8,10 @@ import (
 	"github.com/panjjo/gosip/utils"
 )
 
-// DefaultProtocol DefaultProtocol
+// SIP默认DefaultProtocol
 var DefaultProtocol = "udp"
 
-// DefaultSipVersion DefaultSipVersion
+// SIP默认DefaultSipVersion
 var DefaultSipVersion = "SIP/2.0"
 
 // Port number
@@ -81,32 +81,32 @@ var ContentTypeXML = ContentType("Application/MANSCDP+xml")
 var (
 	// CatalogXML 获取设备列表xml样式
 	CatalogXML = `<?xml version="1.0" encoding="GB2312"?>
-<Query>
-<CmdType>Catalog</CmdType>
-<SN>%d</SN>
-<DeviceID>%s</DeviceID>
-</Query>
-`
+		<Query>
+		<CmdType>Catalog</CmdType>
+		<SN>%d</SN>
+		<DeviceID>%s</DeviceID>
+		</Query>
+		`
 	// RecordInfoXML 获取录像文件列表xml样式
 	RecordInfoXML = `<?xml version="1.0" encoding="GB2312"?>
-<Query>
-<CmdType>RecordInfo</CmdType>
-<SN>%d</SN>
-<DeviceID>%s</DeviceID>
-<StartTime>%s</StartTime>
-<EndTime>%s</EndTime>
-<Secrecy>0</Secrecy>
-<Type>time</Type>
-</Query>
-`
+		<Query>
+		<CmdType>RecordInfo</CmdType>
+		<SN>%d</SN>
+		<DeviceID>%s</DeviceID>
+		<StartTime>%s</StartTime>
+		<EndTime>%s</EndTime>
+		<Secrecy>0</Secrecy>
+		<Type>time</Type>
+		</Query>
+		`
 	// DeviceInfoXML 查询设备详情xml样式
 	DeviceInfoXML = `<?xml version="1.0" encoding="GB2312"?>
-<Query>
-<CmdType>DeviceInfo</CmdType>
-<SN>%d</SN>
-<DeviceID>%s</DeviceID>
-</Query>
-`
+		<Query>
+		<CmdType>DeviceInfo</CmdType>
+		<SN>%d</SN>
+		<DeviceID>%s</DeviceID>
+		</Query>
+		`
 )
 
 // GetDeviceInfoXML 获取设备详情指令

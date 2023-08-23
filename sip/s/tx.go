@@ -40,7 +40,7 @@ func (txs *transacionts) rmTX(tx *Transaction) {
 	txs.rwm.Unlock()
 }
 
-// Transaction Transaction
+// Transaction 代表一个通讯信道
 type Transaction struct {
 	conn   Connection
 	key    string
@@ -48,7 +48,7 @@ type Transaction struct {
 	active chan int
 }
 
-// NewTransaction NewTransaction
+// NewTransaction 表示新创建一个Transaction
 func NewTransaction(key string, conn Connection) *Transaction {
 	logrus.Traceln("new tx", key, time.Now().Format("2006-01-02 15:04:05"))
 	tx := &Transaction{conn: conn, key: key, resp: make(chan *Response, 10), active: make(chan int, 1)}
@@ -125,6 +125,7 @@ func (tx *Transaction) Request(req *Request) error {
 	return err
 }
 
+// 根据Message获取Call-ID
 func getTXKey(msg Message) (key string) {
 	callid, ok := msg.CallID()
 	if ok {

@@ -17,6 +17,7 @@ type MessageNotify struct {
 	Info     string `xml:"Info"`
 }
 
+// 对心跳信息进行处理
 func sipMessageKeepalive(u Devices, body []byte) error {
 	message := &MessageNotify{}
 	if err := utils.XMLDecode(body, message); err != nil {

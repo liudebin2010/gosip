@@ -90,6 +90,7 @@ type recordList struct {
 // 当前获取目录文件设备集合
 var _recordList *sync.Map
 
+// 取得设备发来的历史列表
 func sipMessageRecordInfo(u Devices, body []byte) error {
 	message := &MessageRecordInfoResponse{}
 	if err := utils.XMLDecode(body, message); err != nil {
@@ -126,7 +127,7 @@ func sipMessageRecordInfo(u Devices, body []byte) error {
 	return errors.New("recordlist devices not found")
 }
 
-// Records Records
+// Records
 type Records struct {
 	// 存在录像的天数
 	DayTotal int          `json:"daynum"`

@@ -11,7 +11,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// Streams Streams
+// Streams 实体
 type Streams struct {
 	db.DBModel
 	// 0  直播 1 历史
@@ -65,6 +65,7 @@ type streamsList struct {
 
 var StreamList streamsList
 
+// 获取ssrc
 func getSSRC(t int) string {
 	r := false
 	for {

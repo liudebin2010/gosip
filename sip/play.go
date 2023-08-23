@@ -75,6 +75,7 @@ func SipPlay(data *Streams) (*Streams, error) {
 
 var ssrcLock *sync.Mutex
 
+// 向媒体服务器推流
 func sipPlayPush(data *Streams, channel Channels, device Devices) (*Streams, error) {
 	var (
 		s sdp.Session

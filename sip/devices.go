@@ -184,7 +184,7 @@ func parserDevicesFromReqeust(req *sip.Request) (Devices, bool) {
 	return u, true
 }
 
-// 获取设备信息（注册设备）
+// 向设备发送获取信息（注册设备）
 func sipDeviceInfo(to Devices) {
 	hb := sip.NewHeaderBuilder().SetTo(to.addr).SetFrom(_serverDevices.addr).AddVia(&sip.ViaHop{
 		Params: sip.NewParams().Add("branch", sip.String{Str: sip.GenerateBranch()}),
@@ -258,6 +258,7 @@ type MessageDeviceListResponse struct {
 	Item     []Channels `xml:"DeviceList>Item"`
 }
 
+// 解析设备所包含的通道信息并保存到数据库
 func sipMessageCatalog(u Devices, body []byte) error {
 	message := &MessageDeviceListResponse{}
 	if err := utils.XMLDecode(body, message); err != nil {

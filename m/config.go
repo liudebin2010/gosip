@@ -26,19 +26,20 @@ type Config struct {
 	NotifyMap map[string]string
 }
 
+// 录像相关配置
 type RecordCfg struct {
 	FilePath  string `json:"filepath" yaml:"filepath" mapstructure:"filepath"`
 	Expire    int    `json:"expire" yaml:"expire"  mapstructure:"expire"`
 	Recordmax int    `json:"recordmax" yaml:"recordmax"  mapstructure:"recordmax"`
 }
 
-// Stream Stream
+// Stream 媒体流相关配置
 type Stream struct {
 	HLS  bool `json:"hls" yaml:"hls" mapstructure:"hls"`
 	RTMP bool `json:"rtmp" yaml:"rtmp" mapstructure:"rtmp"`
 }
 
-// MediaServer MediaServer
+// MediaServer ZLMediaKit相关配置
 type MediaServer struct {
 	RESTFUL string `json:"restful" yaml:"restful" mapstructure:"restful"`
 	HTTP    string `json:"http" yaml:"http" mapstructure:"http"`
@@ -49,6 +50,7 @@ type MediaServer struct {
 	Secret  string `json:"secret" yaml:"secret" mapstructure:"secret"`
 }
 
+// GB28181相关配置
 type SysInfo struct {
 	db.DBModel
 	// Region 当前域
@@ -76,7 +78,11 @@ func DefaultInfo() *SysInfo {
 
 var MConfig *Config
 
+// 加载配置文件
 func LoadConfig() {
+	// 设置系统日志格式
+	logrusConfig()
+
 	viper.SetConfigType("yml")
 	viper.SetConfigName("config")
 	viper.AddConfigPath("./")

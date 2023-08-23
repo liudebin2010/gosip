@@ -17,17 +17,17 @@ type RequestMethod string
 // It's nicer to avoid using raw strings to represent methods, so the following standard
 // method names are defined here as constants for convenience.
 const (
-	INVITE   RequestMethod = "INVITE"
-	ACK      RequestMethod = "ACK"
-	CANCEL   RequestMethod = "CANCEL"
-	BYE      RequestMethod = "BYE"
-	REGISTER RequestMethod = "REGISTER"
-	OPTIONS  RequestMethod = "OPTIONS"
-	// SUBSCRIBE RequestMethod = "SUBSCRIBE"
-	// NOTIFY  RequestMethod = "NOTIFY"
-	// REFER   RequestMethod = "REFER"
-	INFO    RequestMethod = "INFO"
-	MESSAGE RequestMethod = "MESSAGE"
+	INVITE    RequestMethod = "INVITE"
+	ACK       RequestMethod = "ACK"
+	CANCEL    RequestMethod = "CANCEL"
+	BYE       RequestMethod = "BYE"
+	REGISTER  RequestMethod = "REGISTER"
+	OPTIONS   RequestMethod = "OPTIONS"
+	SUBSCRIBE RequestMethod = "SUBSCRIBE"
+	NOTIFY    RequestMethod = "NOTIFY"
+	REFER     RequestMethod = "REFER"
+	INFO      RequestMethod = "INFO"
+	MESSAGE   RequestMethod = "MESSAGE"
 )
 
 // Message introduces common SIP message RFC 3261 - 7.
@@ -85,6 +85,7 @@ type Message interface {
 	IsAck() bool
 }
 
+// 定义SIP协议消息的总体结构
 type message struct {
 	// message headers
 	*headers
@@ -95,16 +96,17 @@ type message struct {
 	startLine    func() string
 }
 
-// MessageID MessageID
+// 获取MessageID
 func (msg *message) MessageID() MessageID {
 	return msg.messID
 }
 
-// StartLine StartLine
+// 获取StartLine
 func (msg *message) StartLine() string {
 	return msg.startLine()
 }
 
+// 返回整个SIP消息内容字符串
 func (msg *message) String() string {
 	var buffer bytes.Buffer
 
@@ -119,22 +121,22 @@ func (msg *message) String() string {
 	return buffer.String()
 }
 
-// SipVersion SipVersion
+// 获取SipVersion
 func (msg *message) SipVersion() string {
 	return msg.sipVersion
 }
 
-// SetSipVersion SetSipVersion
+// 设置SetSipVersion
 func (msg *message) SetSipVersion(version string) {
 	msg.sipVersion = version
 }
 
-// Body Body
+// 获取Body
 func (msg *message) Body() []byte {
 	return msg.body
 }
 
-// SetBody sets message body, calculates it length and add 'Content-Length' header.
+// 设置Body sets message body, calculates it length and add 'Content-Length' header.
 func (msg *message) SetBody(body []byte, setContentLength bool) {
 	msg.body = body
 	if setContentLength {
@@ -149,7 +151,7 @@ func (msg *message) SetBody(body []byte, setContentLength bool) {
 	}
 }
 
-//Transport  Transport
+// 获取Transport协议
 func (msg *message) Transport() string {
 	if viaHop, ok := msg.ViaHop(); ok {
 		return viaHop.Transport
@@ -157,28 +159,28 @@ func (msg *message) Transport() string {
 	return DefaultProtocol
 }
 
-// Source Source
+// 获取传输Source
 func (msg *message) Source() net.Addr {
 	return msg.source
 }
 
-// SetSource SetSource
+// 设置传输Source
 func (msg *message) SetSource(src net.Addr) {
 	msg.source = src
 }
 
-// Destination Destination
+// 获取传输Destination
 func (msg *message) Destination() net.Addr {
 	return msg.dest
 }
 
-// SetDestination SetDestination
+// 设置传输Destination
 func (msg *message) SetDestination(dest net.Addr) {
 	msg.dest = dest
 }
 
 // URI  A SIP or SIPS URI, including all params and URI header params.
-//noinspection GoNameStartsWithPackageName
+// noinspection GoNameStartsWithPackageName
 type URI struct {
 	// True if and only if the URI is a SIPS URI.
 	FIsEncrypted bool

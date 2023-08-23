@@ -14,6 +14,70 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+//func zlmOnFlowReport() {
+//	body, err := utils.GetRequest(config.Media.RESTFUL + "/index/hook/on_flow_report?secret=" + config.Media.Secret)
+//}
+//
+//func zlmOnHttpAccess() {
+//	body, err := utils.GetRequest(config.Media.RESTFUL + "/index/hook/on_http_access?secret=" + config.Media.Secret)
+//}
+//
+//func zlmOnPlay() {
+//	body, err := utils.GetRequest(config.Media.RESTFUL + "/index/hook/on_play?secret=" + config.Media.Secret)
+//}
+//
+//func zlmOnPublish() {
+//	body, err := utils.GetRequest(config.Media.RESTFUL + "/index/hook/on_publish?secret=" + config.Media.Secret)
+//}
+//
+//func zlmOnRecordMp4() {
+//	body, err := utils.GetRequest(config.Media.RESTFUL + "/index/hook/on_record_mp4?secret=" + config.Media.Secret)
+//}
+//
+//func zlmOnRtpServerTimeout() {
+//	body, err := utils.GetRequest(config.Media.RESTFUL + "/index/hook/on_rtp_server_timeout?secret=" + config.Media.Secret)
+//}
+//
+//func zlmOnRtspAuth() {
+//	body, err := utils.GetRequest(config.Media.RESTFUL + "/index/hook/on_rtsp_auth?secret=" + config.Media.Secret)
+//}
+//
+//func zlmOnRtspRealm() {
+//	body, err := utils.GetRequest(config.Media.RESTFUL + "/index/hook/on_rtsp_realm?secret=" + config.Media.Secret)
+//}
+//
+//func zlmOnSendRtpStopped() {
+//	body, err := utils.GetRequest(config.Media.RESTFUL + "/index/hook/on_send_rtp_stopped?secret=" + config.Media.Secret)
+//}
+//
+//func zlmOnServerKeepalive() {
+//	body, err := utils.GetRequest(config.Media.RESTFUL + "/index/hook/on_server_keepalive?secret=" + config.Media.Secret)
+//}
+//
+//func zlmOnServerStarted() {
+//	body, err := utils.GetRequest(config.Media.RESTFUL + "/index/hook/on_server_started?secret=" + config.Media.Secret)
+//}
+//
+//func zlmOnShellLogin() {
+//	body, err := utils.GetRequest(config.Media.RESTFUL + "/index/hook/on_shell_login?secret=" + config.Media.Secret)
+//}
+//
+//func zlmOnStreamChanged() {
+//	body, err := utils.GetRequest(config.Media.RESTFUL + "/index/hook/on_stream_changed?secret=" + config.Media.Secret)
+//}
+//
+//func zlmOnStreamNoneReader() {
+//	body, err := utils.GetRequest(config.Media.RESTFUL + "/index/hook/on_stream_none_reader?secret=" + config.Media.Secret)
+//}
+//
+//func zlmOnStreamNotFound() {
+//	body, err := utils.GetRequest(config.Media.RESTFUL + "/index/hook/on_stream_not_found?secret=" + config.Media.Secret)
+//}
+//
+//func zlmOnStreamNotFoundFfmpeg() {
+//	body, err := utils.GetRequest(config.Media.RESTFUL + "/index/hook/on_stream_not_found_ffmpeg?secret=" + config.Media.Secret)
+//}
+
 func ZLMWebHook(c *gin.Context) {
 	method := c.Param("method")
 	switch method {

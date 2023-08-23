@@ -50,6 +50,7 @@ type apiRecordItem struct {
 	id     string
 }
 
+// 开启云录像
 func (ri *apiRecordItem) Start() (string, interface{}) {
 	if config.Record.Recordmax <= 0 {
 		return m.StatusSysERR, errors.New("config record max time invalid.")
@@ -85,6 +86,8 @@ func (ri *apiRecordItem) Start() (string, interface{}) {
 	}
 	return m.StatusSucc, ri.id
 }
+
+// 停止云录像
 func (ri *apiRecordItem) Stop() (string, interface{}) {
 	err := zlmStopRecord(ri.params)
 	if err != nil {
@@ -93,6 +96,7 @@ func (ri *apiRecordItem) Stop() (string, interface{}) {
 	return m.StatusSucc, ""
 }
 
+// 下载云录像
 func (ri *apiRecordItem) Down(url string) {
 	db.UpdateAll(db.DBClient, new(Files), db.M{"id=?": ri.id}, db.M{"end": time.Now().Unix(), "status": 1, "file": url})
 }
@@ -101,7 +105,7 @@ func (ri *apiRecordItem) Resp(data string) {
 	ri.resp <- data
 }
 
-// Files Files
+// Files：录像文件
 type Files struct {
 	db.DBModel
 	Start  int64  `json:"start" bson:"start"`
@@ -114,6 +118,7 @@ type Files struct {
 	params url.Values
 }
 
+// 录像文件清理
 func ClearFiles() {
 	var files []Files
 	var ids []string

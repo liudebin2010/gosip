@@ -1,17 +1,15 @@
 package main
 
 import (
-	"net/http"
-	_ "net/http/pprof"
-
 	"github.com/gin-gonic/gin"
 	"github.com/panjjo/gosip/api"
 	"github.com/panjjo/gosip/api/middleware"
+	_ "github.com/panjjo/gosip/docs"
 	"github.com/panjjo/gosip/m"
 	sipapi "github.com/panjjo/gosip/sip"
 	"github.com/sirupsen/logrus"
-
-	_ "github.com/panjjo/gosip/docs"
+	"net/http"
+	_ "net/http/pprof"
 
 	"github.com/robfig/cron"
 	swaggerfiles "github.com/swaggo/files"
@@ -37,27 +35,32 @@ import (
 
 func main() {
 	//pprof
+	//访问地址：http://0.0.0.0:6060/debug/pprof
 	go func() {
 		http.ListenAndServe("0.0.0.0:6060", nil)
 	}()
 
 	sipapi.Start()
 
+	//构建swagger文档
+	//访问地址： http://0.0.0.0:6060/swagger/index.html
 	r := gin.Default()
 	r.Use(middleware.Recovery)
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 
+	//开放restfull api
 	api.Init(r)
 
 	logrus.Fatal(r.Run(m.MConfig.API))
-	// restapi.RestfulAPI()
 }
 
+// init函数先于main函数自动执行
 func init() {
 	m.LoadConfig()
 	_cron()
 }
 
+// 定时任务
 func _cron() {
 	c := cron.New()                                 // 新建一个定时任务对象
 	c.AddFunc("0 */5 * * * *", sipapi.CheckStreams) // 定时关闭推送流

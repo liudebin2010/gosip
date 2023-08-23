@@ -10,7 +10,7 @@ import (
 	sipapi "github.com/panjjo/gosip/sip"
 )
 
-// @Summary     回放文件时间列表
+// @Summary     回放文件时间列表：对外接口
 // @Description 用来获取通道设备存储的可回放时间段列表，注意控制时间跨度，跨度越大，数据量越多，返回越慢，甚至会超时（最多10s）。
 // @Tags        records
 // @Accept      x-www-form-urlencoded

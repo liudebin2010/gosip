@@ -1,22 +1,26 @@
 mod: debug
 database:
   dialect: mysql # mysql postgresql sqllite
-  url: root:123456@tcp(localhost:3307)/gosip?charset=utf8&parseTime=True&loc=Local # 数据库地址
+  url: root:1qaz!QAZ@tcp(localhost:3306)/gosip?charset=utf8&parseTime=True&loc=Local # 数据库地址
 udp: 0.0.0.0:5060 # sip服务器udp端口
 api: 0.0.0.0:8090 # sip服务 restfulapi 端口
 secret: z9hG4bK1233983766 # restful接口验证key 验证请求使用
 logger: trace
 media:
-  restful: http://localhost:8080 # media 服务器restfulapi地址 
-  http: http://localhost:8080  # media 服务器 http请求地址
-  WS: ws://localhost:8080  # media 服务器 ws请求地址
-  rtmp: rtmp://localhost:1935  # media 服务器 rtmp请求地址
-  rtsp: rtsp://localhost:554   # media 服务器 rtsp请求地址
-  rtp: http://192.168.1.90:10000  # media rtp请求地址 zlm对外开放的接受rtp推流的地址
+  restful: http://10.100.11.227:80 # media 服务器restfulapi地址
+  http: http://10.100.11.227:80  # media 服务器 http请求地址
+  WS: ws://10.100.11.227:80  # media 服务器 ws请求地址
+  rtmp: rtmp://10.100.11.227:1935  # media 服务器 rtmp请求地址
+  rtsp: rtsp://10.100.11.227:554   # media 服务器 rtsp请求地址
+  rtp: http://10.100.11.227:10008  # media rtp请求地址 zlm对外开放的接受rtp推流的地址
   secret: 035c73f7-bb6b-4889-a715-d9eb2d1925cc # zlm secret key 用来请求zlm接口验证
 stream:
   hls: 1 # 是否开启视频流转hls
   rtmp: 1 # 是否开启视频流转rtmp
+record:
+  filepath:     # 路径
+  expire:     # 过期时间
+  recordmax:      # 最大值
 gb28181: # gb28181 域，系统id，用户id，通道id，用户数量，初次运行使用配置，之后保存数据库，如果数据库不存在使用配置文件内容
   lid:    "37070000082008000001" # 系统ID
   region: 3707000008           # 系统域
@@ -24,8 +28,9 @@ gb28181: # gb28181 域，系统id，用户id，通道id，用户数量，初次�
   cid:    37070000081318       # 通道前缀
   dnum:   0 # 设备id = did + dnum
   cnum:   0 # 通道id = cid + cnum
-notify:  
+notify:
   devices_active: # 设备活跃通知
-  devices_regiest: #设备注册成功通知
+  devices_regiest: # 设备注册成功通知
   channels_active:  # 通道活跃通知
+  records_stop:     # 录像停止通知
 

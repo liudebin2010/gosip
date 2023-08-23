@@ -27,6 +27,7 @@ type Notify struct {
 	Data   interface{} `json:"data"`
 }
 
+// 发送告警信息到接口
 func notify(data *Notify) {
 	if url, ok := config.NotifyMap[data.Method]; ok {
 		res, err := utils.PostJSONRequest(url, data)
@@ -43,6 +44,7 @@ func notify(data *Notify) {
 	}
 }
 
+// 设备活跃告警信息
 func notifyDevicesAcitve(id, status string) *Notify {
 	return &Notify{
 		Method: NotifyMethodDevicesActive,
@@ -53,6 +55,8 @@ func notifyDevicesAcitve(id, status string) *Notify {
 		},
 	}
 }
+
+// 设备注册告警信息
 func notifyDevicesRegister(u Devices) *Notify {
 	u.Sys = *config.GB28181
 	return &Notify{
@@ -61,6 +65,7 @@ func notifyDevicesRegister(u Devices) *Notify {
 	}
 }
 
+// 通道活跃告警信息
 func notifyChannelsActive(d Channels) *Notify {
 	return &Notify{
 		Method: NotifyMethodChannelsActive,
@@ -71,6 +76,8 @@ func notifyChannelsActive(d Channels) *Notify {
 		},
 	}
 }
+
+// 录像停止告警信息
 func notifyRecordStop(url string, req url.Values) *Notify {
 	d := map[string]interface{}{
 		"url": fmt.Sprintf("%s/%s", config.Media.HTTP, url),

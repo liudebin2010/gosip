@@ -11,7 +11,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// @Summary     监控播放（直播/回放）
+// @Summary     监控播放（直播/回放）：接口
 // @Description 直播一个通道最多存在一个流，回放每请求一次生成一个流
 // @Tags        streams
 // @Accept      x-www-form-urlencoded
