@@ -87,9 +87,9 @@ func LoadSYSInfo() {
 		DeviceID: _sysinfo.LID,
 		Region:   _sysinfo.Region,
 		addr: &sip.Address{
-			DisplayName: sip.String{Str: "sipserver"},
-			URI:         &uri,
-			Params:      sip.NewParams(),
+			//DisplayName: sip.String{Str: "sipserver"},
+			URI:    &uri,
+			Params: sip.NewParams(),
 		},
 	}
 

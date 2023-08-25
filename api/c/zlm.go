@@ -14,79 +14,11 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-//func zlmOnFlowReport() {
-//	body, err := utils.GetRequest(config.Media.RESTFUL + "/index/hook/on_flow_report?secret=" + config.Media.Secret)
-//}
-//
-//func zlmOnHttpAccess() {
-//	body, err := utils.GetRequest(config.Media.RESTFUL + "/index/hook/on_http_access?secret=" + config.Media.Secret)
-//}
-//
-//func zlmOnPlay() {
-//	body, err := utils.GetRequest(config.Media.RESTFUL + "/index/hook/on_play?secret=" + config.Media.Secret)
-//}
-//
-//func zlmOnPublish() {
-//	body, err := utils.GetRequest(config.Media.RESTFUL + "/index/hook/on_publish?secret=" + config.Media.Secret)
-//}
-//
-//func zlmOnRecordMp4() {
-//	body, err := utils.GetRequest(config.Media.RESTFUL + "/index/hook/on_record_mp4?secret=" + config.Media.Secret)
-//}
-//
-//func zlmOnRtpServerTimeout() {
-//	body, err := utils.GetRequest(config.Media.RESTFUL + "/index/hook/on_rtp_server_timeout?secret=" + config.Media.Secret)
-//}
-//
-//func zlmOnRtspAuth() {
-//	body, err := utils.GetRequest(config.Media.RESTFUL + "/index/hook/on_rtsp_auth?secret=" + config.Media.Secret)
-//}
-//
-//func zlmOnRtspRealm() {
-//	body, err := utils.GetRequest(config.Media.RESTFUL + "/index/hook/on_rtsp_realm?secret=" + config.Media.Secret)
-//}
-//
-//func zlmOnSendRtpStopped() {
-//	body, err := utils.GetRequest(config.Media.RESTFUL + "/index/hook/on_send_rtp_stopped?secret=" + config.Media.Secret)
-//}
-//
-//func zlmOnServerKeepalive() {
-//	body, err := utils.GetRequest(config.Media.RESTFUL + "/index/hook/on_server_keepalive?secret=" + config.Media.Secret)
-//}
-//
-//func zlmOnServerStarted() {
-//	body, err := utils.GetRequest(config.Media.RESTFUL + "/index/hook/on_server_started?secret=" + config.Media.Secret)
-//}
-//
-//func zlmOnShellLogin() {
-//	body, err := utils.GetRequest(config.Media.RESTFUL + "/index/hook/on_shell_login?secret=" + config.Media.Secret)
-//}
-//
-//func zlmOnStreamChanged() {
-//	body, err := utils.GetRequest(config.Media.RESTFUL + "/index/hook/on_stream_changed?secret=" + config.Media.Secret)
-//}
-//
-//func zlmOnStreamNoneReader() {
-//	body, err := utils.GetRequest(config.Media.RESTFUL + "/index/hook/on_stream_none_reader?secret=" + config.Media.Secret)
-//}
-//
-//func zlmOnStreamNotFound() {
-//	body, err := utils.GetRequest(config.Media.RESTFUL + "/index/hook/on_stream_not_found?secret=" + config.Media.Secret)
-//}
-//
-//func zlmOnStreamNotFoundFfmpeg() {
-//	body, err := utils.GetRequest(config.Media.RESTFUL + "/index/hook/on_stream_not_found_ffmpeg?secret=" + config.Media.Secret)
-//}
-
 func ZLMWebHook(c *gin.Context) {
 	method := c.Param("method")
 	switch method {
-	case "on_server_started":
-		// zlm 启动，具体业务自行实现
-		m.MConfig.GB28181.MediaServer = true
-		c.JSON(http.StatusOK, map[string]any{
-			"code": 0,
-			"msg":  "success"})
+	case "on_flow_report":
+		logrus.Infoln("on_flow_report!")
 	case "on_http_access":
 		// http请求鉴权，具体业务自行实现
 		c.JSON(http.StatusOK, map[string]any{
@@ -107,18 +39,38 @@ func ZLMWebHook(c *gin.Context) {
 			"enableRtxp": m.MConfig.Stream.RTMP,
 			"msg":        "success",
 		})
+	case "on_record_mp4":
+		//  mp4 录制完成
+		zlmRecordMp4(c)
+	case "on_record_ts":
+		logrus.Infoln("on_record_ts!")
+	case "on_rtp_server_timeout":
+		logrus.Infoln("on_rtp_server_timeout!")
+	case "on_rtsp_auth":
+		logrus.Infoln("on_rtsp_auth!")
+	case "on_rtsp_realm":
+		logrus.Infoln("on_rtsp_realm!")
+	case "on_send_rtp_stopped":
+		logrus.Infoln("on_send_rtp_stopped!")
+	case "on_server_keepalive":
+		logrus.Infoln("on_server_keepalive!")
+	case "on_server_started":
+		// zlm 启动，具体业务自行实现
+		m.MConfig.GB28181.MediaServer = true
+		c.JSON(http.StatusOK, map[string]any{
+			"code": 0,
+			"msg":  "success"})
+	case "on_shell_login":
+		logrus.Infoln("on_shell_login!")
+	case "on_stream_changed":
+		// 流注册和注销通知
+		zlmStreamChanged(c)
 	case "on_stream_none_reader":
 		// 无人阅读通知 关闭流
 		zlmStreamNoneReader(c)
 	case "on_stream_not_found":
 		// 请求播放时，流不存在时触发
 		zlmStreamNotFound(c)
-	case "on_record_mp4":
-		//  mp4 录制完成
-		zlmRecordMp4(c)
-	case "on_stream_changed":
-		// 流注册和注销通知
-		zlmStreamChanged(c)
 	default:
 		c.JSON(http.StatusOK, map[string]any{
 			"code": -1,
@@ -316,4 +268,221 @@ func zlmStreamNoneReader(c *gin.Context) {
 		"close": true,
 	})
 	logrus.Infoln("closeStream on_stream_none_reader", req.Stream)
+}
+
+func ZLMWebAPI(c *gin.Context) {
+	method := c.Param("method")
+	switch method {
+	case "getServerConfig":
+		logrus.Infoln("getServerConfig")
+		c.JSON(http.StatusOK, map[string]any{
+			"code": 0,
+			"msg":  "getServerConfig",
+		})
+	case "getAllSession":
+		logrus.Infoln("getAllSession")
+		c.JSON(http.StatusOK, map[string]any{
+			"code": 0,
+			"msg":  "getAllSession",
+		})
+	case "getApiList":
+		logrus.Infoln("getApiList")
+		c.JSON(http.StatusOK, map[string]any{
+			"code": 0,
+			"msg":  "getApiList",
+		})
+	case "getMediaList":
+		logrus.Infoln("getMediaList")
+		c.JSON(http.StatusOK, map[string]any{
+			"code": 0,
+			"msg":  "getMediaList",
+		})
+	case "getThreadsLoad":
+		logrus.Infoln("getThreadsLoad")
+		c.JSON(http.StatusOK, map[string]any{
+			"code": 0,
+			"msg":  "getThreadsLoad",
+		})
+	case "getWorkThreadsLoad":
+		logrus.Infoln("getWorkThreadsLoad")
+		c.JSON(http.StatusOK, map[string]any{
+			"code": 0,
+			"msg":  "getWorkThreadsLoad",
+		})
+	case "getSnap":
+		logrus.Infoln("getSnap")
+		c.JSON(http.StatusOK, map[string]any{
+			"code": 0,
+			"msg":  "getSnap",
+		})
+	case "getMediaInfo":
+		logrus.Infoln("getMediaInfo")
+		c.JSON(http.StatusOK, map[string]any{
+			"code": 0,
+			"msg":  "getMediaInfo",
+		})
+	case "restartServer":
+		logrus.Infoln("restartServer")
+		c.JSON(http.StatusOK, map[string]any{
+			"code": 0,
+			"msg":  "restartServer",
+		})
+	case "addFFmpegSource":
+		logrus.Infoln("addFFmpegSource")
+		c.JSON(http.StatusOK, map[string]any{
+			"code": 0,
+			"msg":  "addFFmpegSource",
+		})
+	case "addStreamProxy":
+		logrus.Infoln("addStreamProxy")
+		c.JSON(http.StatusOK, map[string]any{
+			"code": 0,
+			"msg":  "addStreamProxy",
+		})
+	case "close_stream":
+		logrus.Infoln("close_stream")
+		c.JSON(http.StatusOK, map[string]any{
+			"code": 0,
+			"msg":  "close_stream",
+		})
+	case "close_streams":
+		logrus.Infoln("close_streams")
+		c.JSON(http.StatusOK, map[string]any{
+			"code": 0,
+			"msg":  "close_streams",
+		})
+	case "delFFmpegSource":
+		logrus.Infoln("delFFmpegSource")
+		c.JSON(http.StatusOK, map[string]any{
+			"code": 0,
+			"msg":  "delFFmpegSource",
+		})
+	case "delStreamProxy":
+		logrus.Infoln("delStreamProxy")
+		c.JSON(http.StatusOK, map[string]any{
+			"code": 0,
+			"msg":  "delStreamProxy",
+		})
+	case "kick_session":
+		logrus.Infoln("kick_session")
+		c.JSON(http.StatusOK, map[string]any{
+			"code": 0,
+			"msg":  "kick_session",
+		})
+	case "kick_sessions":
+		logrus.Infoln("kick_sessions")
+		c.JSON(http.StatusOK, map[string]any{
+			"code": 0,
+			"msg":  "kick_sessions",
+		})
+	case "setServerConfig":
+		logrus.Infoln("setServerConfig")
+		c.JSON(http.StatusOK, map[string]any{
+			"code": 0,
+			"msg":  "setServerConfig",
+		})
+	case "isMediaOnline":
+		logrus.Infoln("isMediaOnline")
+		c.JSON(http.StatusOK, map[string]any{
+			"code": 0,
+			"msg":  "isMediaOnline",
+		})
+	case "getRtpInfo":
+		logrus.Infoln("getRtpInfo")
+		c.JSON(http.StatusOK, map[string]any{
+			"code": 0,
+			"msg":  "getRtpInfo",
+		})
+	case "getMp4RecordFile":
+		logrus.Infoln("getMp4RecordFile")
+		c.JSON(http.StatusOK, map[string]any{
+			"code": 0,
+			"msg":  "getMp4RecordFile",
+		})
+	case "startRecord":
+		logrus.Infoln("startRecord")
+		c.JSON(http.StatusOK, map[string]any{
+			"code": 0,
+			"msg":  "startRecord",
+		})
+	case "stopRecord":
+		logrus.Infoln("stopRecord")
+		c.JSON(http.StatusOK, map[string]any{
+			"code": 0,
+			"msg":  "stopRecord",
+		})
+	case "getRecordStatus":
+		logrus.Infoln("getRecordStatus")
+		c.JSON(http.StatusOK, map[string]any{
+			"code": 0,
+			"msg":  "getRecordStatus",
+		})
+	case "openRtpServer":
+		logrus.Infoln("openRtpServer")
+		c.JSON(http.StatusOK, map[string]any{
+			"code": 0,
+			"msg":  "openRtpServer",
+		})
+	case "closeRtpServer":
+		logrus.Infoln("closeRtpServer")
+		c.JSON(http.StatusOK, map[string]any{
+			"code": 0,
+			"msg":  "closeRtpServer",
+		})
+	case "listRtpServer":
+		logrus.Infoln("listRtpServer")
+		c.JSON(http.StatusOK, map[string]any{
+			"code": 0,
+			"msg":  "listRtpServer",
+		})
+	case "startSendRtp":
+		logrus.Infoln("startSendRtp")
+		c.JSON(http.StatusOK, map[string]any{
+			"code": 0,
+			"msg":  "startSendRtp",
+		})
+	case "stopSendRtp":
+		logrus.Infoln("stopSendRtp")
+		c.JSON(http.StatusOK, map[string]any{
+			"code": 0,
+			"msg":  "stopSendRtp",
+		})
+	case "getStatistic":
+		logrus.Infoln("getStatistic")
+		c.JSON(http.StatusOK, map[string]any{
+			"code": 0,
+			"msg":  "getStatistic",
+		})
+	case "addStreamPusherProxy":
+		logrus.Infoln("addStreamPusherProxy")
+		c.JSON(http.StatusOK, map[string]any{
+			"code": 0,
+			"msg":  "addStreamPusherProxy",
+		})
+	case "delStreamPusherProxy":
+		logrus.Infoln("delStreamPusherProxy")
+		c.JSON(http.StatusOK, map[string]any{
+			"code": 0,
+			"msg":  "delStreamPusherProxy",
+		})
+	case "version":
+		logrus.Infoln("version")
+		response, err := sipapi.ZlmVersion()
+		if err != nil {
+			logrus.Infoln("get zlm version err")
+		}
+		c.JSON(http.StatusOK, response)
+	case "getMediaPlayerList":
+		logrus.Infoln("getMediaPlayerList")
+		c.JSON(http.StatusOK, map[string]any{
+			"code": 0,
+			"msg":  "getMediaPlayerList",
+		})
+	default:
+		logrus.Infoln("default")
+		c.JSON(http.StatusOK, map[string]any{
+			"code": -1,
+			"msg":  "body error",
+		})
+	}
 }

@@ -57,6 +57,8 @@ func main() {
 // init函数先于main函数自动执行
 func init() {
 	m.LoadConfig()
+	// 服务启动时将ZLM的回调写到ZLM服务器配置文件上
+	sipapi.ZlmSetServerConfig4Single()
 	_cron()
 }
 

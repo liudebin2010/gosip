@@ -20,7 +20,7 @@ type Packet struct {
 }
 
 func newPacket(data []byte, raddr net.Addr) Packet {
-	logrus.Traceln("receive new packet,from:", raddr.String(), "\n", string(data))
+	//logrus.Traceln("receive new packet,from:", raddr.String(), "\n", string(data))
 	return Packet{
 		reader:     bufio.NewReader(bytes.NewReader(data)),
 		raddr:      raddr,
@@ -108,7 +108,7 @@ func (conn *connection) ReadFrom(buf []byte) (num int, raddr net.Addr, err error
 	if err != nil {
 		return num, raddr, utils.NewError(err, conn.logKey, "readfrom", conn.baseConn.LocalAddr().String(), raddr.String())
 	}
-	logrus.Tracef("readFrom %d , %s -> %s \n%s", num, raddr, conn.LocalAddr(), string(buf[:num]))
+	//logrus.Tracef("readFrom %d , %s -> %s \n%s", num, raddr, conn.LocalAddr(), string(buf[:num]))
 	return num, raddr, err
 }
 
@@ -130,7 +130,7 @@ func (conn *connection) WriteTo(buf []byte, raddr net.Addr) (num int, err error)
 	if err != nil {
 		return num, utils.NewError(err, conn.logKey, "writeTo", conn.baseConn.LocalAddr().String(), raddr.String())
 	}
-	logrus.Tracef("writeTo %d , %s -> %s \n%s", num, conn.baseConn.LocalAddr(), raddr.String(), string(buf[:num]))
+	//logrus.Tracef("writeTo %d , %s -> %s \n%s", num, conn.baseConn.LocalAddr(), raddr.String(), string(buf[:num]))
 	return num, err
 }
 

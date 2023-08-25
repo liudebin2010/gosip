@@ -38,6 +38,11 @@ func Init(r *gin.Engine) {
 	}
 	// zlm webhook
 	{
-		r.POST("/zlm/webhook/:method", api.ZLMWebHook)
+		r.POST("/index/hook/:method", api.ZLMWebHook)
 	}
+	// zlm api
+	{
+		r.POST("/index/api/:method", api.ZLMWebAPI)
+	}
+
 }
