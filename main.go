@@ -58,7 +58,7 @@ func main() {
 func init() {
 	m.LoadConfig()
 	// 服务启动时将ZLM的回调写到ZLM服务器配置文件上
-	sipapi.ZlmSetServerConfig4Single()
+	sipapi.SyncWebhook2ZlmConfig()
 	_cron()
 }
 
