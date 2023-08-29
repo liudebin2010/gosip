@@ -26,7 +26,7 @@ func Start() {
 	// 加载系统信息
 	LoadSYSInfo()
 	// 服务启动时将ZLM的回调写到ZLM服务器配置文件上
-	//syncWebhook2ZlmConfig()
+	syncWebhook2ZlmConfig()
 
 	srv = sip.NewServer()
 	srv.RegistHandler(sip.REGISTER, handlerRegister) //处理下级设备的注册请求
