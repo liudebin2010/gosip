@@ -42,7 +42,7 @@ func Init(r *gin.Engine) {
 	}
 	// zlm api
 	{
-		r.POST("/index/api/:method", api.ZLMWebAPI)
+		r.POST("/zlm/api/:method", api.ZLMWebAPI)
 	}
 
 }

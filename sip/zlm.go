@@ -139,270 +139,229 @@ func zlmStopRecord(values url.Values) error {
 // 功能：通过fork FFmpeg进程的方式拉流代理，支持任意协议
 //
 // 范例：http://127.0.0.1/index/api/addFFmpegSource?src_url=http://live.hkstv.hk.lxdns.com/live/hks2/playlist.m3u8&dst_url=rtmp://127.0.0.1/live/hks2&timeout_ms=10000&ffmpeg_cmd_key=ffmpeg.cmd
-func ZlmAddFFmpegSource(params map[string]string) (map[string]interface{}, error) {
-	var str string
-	for k, v := range params {
-		str += "&" + k + "=" + v
-	}
-	body, err := utils.GetRequest(config.Media.RESTFUL + "/index/api/addFFmpegSource?secret=" + config.Media.Secret + str)
+func ZlmAddFFmpegSource(params map[string]any) (map[string]any, error) {
+	body, err := utils.PostJSONRequest(config.Media.RESTFUL+"/index/api/addFFmpegSource", params)
 	if err != nil {
-		logrus.Errorln("set server config failed, err=", err)
+		logrus.Errorln("ZlmAddFFmpegSource failed, err=", err)
 		return nil, err
 	}
 	resp := map[string]interface{}{}
 	err = utils.JSONDecode(body, &resp)
 	if err != nil {
-		logrus.Errorln("set config: json decode failed, err=", err)
+		logrus.Errorln("ZlmAddFFmpegSource: json decode failed, err=", err)
 		return nil, err
 	}
 	if code, ok := resp["code"]; !ok || fmt.Sprint(code) != "0" {
-		logrus.Errorln("set config: response error")
-		return nil, errors.New("set config: response error")
+		logrus.Errorln("ZlmAddFFmpegSource: response error")
+		return nil, errors.New("ZlmAddFFmpegSource: response error")
 	}
-	logrus.Infof("invoke interface zlm-addFFmpegSource response:\n%s", resp)
+	logrus.Infof("invoke api ZlmAddFFmpegSource response:\n%s", resp)
 	return resp, nil
 }
 
 // 功能：动态添加rtsp/rtmp/hls/http-ts/http-flv拉流代理(只支持H264/H265/aac/G711/opus负载)
 // 范例：http://127.0.0.1/index/api/addStreamProxy?vhost=__defaultVhost__&app=proxy&stream=0&url=rtmp://live.hkstv.hk.lxdns.com/live/hks2
-func ZlmAddStreamProxy(params map[string]string) (map[string]interface{}, error) {
-	var str string
-	for k, v := range params {
-		str += "&" + k + "=" + v
-	}
-	body, err := utils.GetRequest(config.Media.RESTFUL + "/index/api/addStreamProxy?secret=" + config.Media.Secret)
+func ZlmAddStreamProxy(params map[string]any) (map[string]interface{}, error) {
+	body, err := utils.PostJSONRequest(config.Media.RESTFUL+"/index/api/addStreamProxy", params)
 	if err != nil {
-		logrus.Errorln("set server config failed, err=", err)
+		logrus.Errorln("ZlmAddStreamProxy, err=", err)
 		return nil, err
 	}
 	resp := map[string]interface{}{}
 	err = utils.JSONDecode(body, &resp)
 	if err != nil {
-		logrus.Errorln("set config: json decode failed, err=", err)
+		logrus.Errorln("ZlmAddStreamProxy: json decode failed, err=", err)
 		return nil, err
 	}
 	if code, ok := resp["code"]; !ok || fmt.Sprint(code) != "0" {
-		logrus.Errorln("set config: response error")
+		logrus.Errorln("ZlmAddStreamProxy: response error")
 		return nil, errors.New("set config: response error")
 	}
-	logrus.Infof("invoke interface zlm-addStreamProxy response:\n%s", resp)
+	logrus.Infof("invoke api ZlmAddStreamProxy response:\n%s", resp)
 	return resp, nil
 }
 
 // 功能：添加rtsp/rtmp主动推流(把本服务器的直播流推送到其他服务器去)
 //
 // 范例：http://127.0.0.1/index/api/addStreamPusherProxy?vhost=__defaultVhost__&app=proxy&stream=test&dst_url=rtmp://127.0.0.1/live/test2
-func ZlmAddStreamPusherProxy(params map[string]string) (map[string]interface{}, error) {
-	var str string
-	for k, v := range params {
-		str += "&" + k + "=" + v
-	}
-	body, err := utils.GetRequest(config.Media.RESTFUL + "/index/api/addStreamPusherProxy?secret=" + config.Media.Secret + str)
+func ZlmAddStreamPusherProxy(params map[string]any) (map[string]interface{}, error) {
+	body, err := utils.PostJSONRequest(config.Media.RESTFUL+"/index/api/addStreamPusherProxy", params)
 	if err != nil {
-		logrus.Errorln("set server config failed, err=", err)
+		logrus.Errorln("ZlmAddStreamPusherProxy failed, err=", err)
 		return nil, err
 	}
 	resp := map[string]interface{}{}
 	err = utils.JSONDecode(body, &resp)
 	if err != nil {
-		logrus.Errorln("set config: json decode failed, err=", err)
+		logrus.Errorln("ZlmAddStreamPusherProxy: json decode failed, err=", err)
 		return nil, err
 	}
 	if code, ok := resp["code"]; !ok || fmt.Sprint(code) != "0" {
-		logrus.Errorln("set config: response error")
-		return nil, errors.New("set config: response error")
+		logrus.Errorln("ZlmAddStreamPusherProxy: response error")
+		return nil, errors.New("ZlmAddStreamPusherProxy: response error")
 	}
-	logrus.Infof("invoke interface zlm-addStreamPusherProxy response:\n%s", resp)
+	logrus.Infof("invoke api ZlmAddStreamPusherProxy response:\n%s", resp)
 	return resp, nil
 }
 
 // 功能：创建GB28181 RTP接收端口，如果该端口接收数据超时，则会自动被回收(不用调用closeRtpServer接口)
 //
 // 范例：http://127.0.0.1/index/api/openRtpServer?port=0&tcp_mode=1&stream_id=test
-func ZlmCloseRtpServer(params map[string]string) (map[string]interface{}, error) {
-	var str string
-	for k, v := range params {
-		str += "&" + k + "=" + v
-	}
-	body, err := utils.GetRequest(config.Media.RESTFUL + "/index/api/closeRtpServer?secret=" + config.Media.Secret + str)
+func ZlmCloseRtpServer(params map[string]any) (map[string]interface{}, error) {
+	body, err := utils.PostJSONRequest(config.Media.RESTFUL+"/index/api/closeRtpServer", params)
 	if err != nil {
-		logrus.Errorln("set server config failed, err=", err)
+		logrus.Errorln("ZlmCloseRtpServer failed, err=", err)
 		return nil, err
 	}
 	resp := map[string]interface{}{}
 	err = utils.JSONDecode(body, &resp)
 	if err != nil {
-		logrus.Errorln("set config: json decode failed, err=", err)
+		logrus.Errorln("ZlmCloseRtpServer: json decode failed, err=", err)
 		return nil, err
 	}
 	if code, ok := resp["code"]; !ok || fmt.Sprint(code) != "0" {
-		logrus.Errorln("set config: response error")
-		return nil, errors.New("set config: response error")
+		logrus.Errorln("ZlmCloseRtpServer: response error")
+		return nil, errors.New("ZlmCloseRtpServer: response error")
 	}
-	logrus.Infof("invoke interface zlm-closeRtpServer response:\n%s", resp)
+	logrus.Infof("invoke api ZlmCloseRtpServer response:\n%s", resp)
 	return resp, nil
 }
 
 // 功能：关闭流(目前所有类型的流都支持关闭)
 //
 // 范例：http://127.0.0.1/index/api/close_streams?schema=rtmp&vhost=__defaultVhost__&app=live&stream=0&force=1
-func ZlmCloseStreams(params map[string]string) (map[string]interface{}, error) {
-	var str string
-	for k, v := range params {
-		str += "&" + k + "=" + v
-	}
-	body, err := utils.GetRequest(config.Media.RESTFUL + "/index/api/close_streams?secret=" + config.Media.Secret + str)
+func ZlmCloseStreams(params map[string]any) (map[string]interface{}, error) {
+	body, err := utils.PostJSONRequest(config.Media.RESTFUL+"/index/api/close_streams", params)
 	if err != nil {
-		logrus.Errorln("set server config failed, err=", err)
+		logrus.Errorln("ZlmCloseStreams failed, err=", err)
 		return nil, err
 	}
 	resp := map[string]interface{}{}
 	err = utils.JSONDecode(body, &resp)
 	if err != nil {
-		logrus.Errorln("set config: json decode failed, err=", err)
+		logrus.Errorln("ZlmCloseStreams: json decode failed, err=", err)
 		return nil, err
 	}
 	if code, ok := resp["code"]; !ok || fmt.Sprint(code) != "0" {
-		logrus.Errorln("set config: response error")
-		return nil, errors.New("set config: response error")
+		logrus.Errorln("ZlmCloseStreams: response error")
+		return nil, errors.New("ZlmCloseStreams: response error")
 	}
-	logrus.Infof("invoke interface zlm-close_streams response:\n%s", resp)
+	logrus.Infof("invoke api ZlmCloseStreams response:\n%s", resp)
 	return resp, nil
 }
 
 // 功能：关闭ffmpeg拉流代理
 //
 // 范例：http://127.0.0.1/index/api/delFFmpegSource?key=5f748d2ef9712e4b2f6f970c1d44d93a
-func ZlmConnectRtpServer(params map[string]string) (map[string]interface{}, error) {
-
-	var str string
-	for k, v := range params {
-		str += "&" + k + "=" + v
-	}
-	body, err := utils.GetRequest(config.Media.RESTFUL + "/index/api/connectRtpServer?secret=" + config.Media.Secret + str)
+func ZlmConnectRtpServer(params map[string]any) (map[string]interface{}, error) {
+	body, err := utils.PostJSONRequest(config.Media.RESTFUL+"/index/api/connectRtpServer", params)
 	if err != nil {
-		logrus.Errorln("set server config failed, err=", err)
+		logrus.Errorln("ZlmConnectRtpServer failed, err=", err)
 		return nil, err
 	}
 	resp := map[string]interface{}{}
 	err = utils.JSONDecode(body, &resp)
 	if err != nil {
-		logrus.Errorln("set config: json decode failed, err=", err)
+		logrus.Errorln("ZlmConnectRtpServer: json decode failed, err=", err)
 		return nil, err
 	}
 	if code, ok := resp["code"]; !ok || fmt.Sprint(code) != "0" {
-		logrus.Errorln("set config: response error")
-		return nil, errors.New("set config: response error")
+		logrus.Errorln("ZlmConnectRtpServer: response error")
+		return nil, errors.New("ZlmConnectRtpServer: response error")
 	}
-	logrus.Infof("invoke interface zlm-connectRtpServer response:\n%s", resp)
+	logrus.Infof("invoke api ZlmConnectRtpServer response:\n%s", resp)
 	return resp, nil
 }
 
 // 功能：关闭ffmpeg拉流代理
 //
 // 范例：http://127.0.0.1/index/api/delFFmpegSource?key=5f748d2ef9712e4b2f6f970c1d44d93a
-func ZlmDelFFmpegSource(params map[string]string) (map[string]interface{}, error) {
-	var str string
-	for k, v := range params {
-		str += "&" + k + "=" + v
-	}
-	body, err := utils.GetRequest(config.Media.RESTFUL + "/index/api/delFFmpegSource?secret=" + config.Media.Secret + str)
+func ZlmDelFFmpegSource(params map[string]any) (map[string]interface{}, error) {
+	body, err := utils.PostJSONRequest(config.Media.RESTFUL+"/index/api/delFFmpegSource", params)
 	if err != nil {
-		logrus.Errorln("set server config failed, err=", err)
+		logrus.Errorln("ZlmDelFFmpegSource failed, err=", err)
 		return nil, err
 	}
 	resp := map[string]interface{}{}
 	err = utils.JSONDecode(body, &resp)
 	if err != nil {
-		logrus.Errorln("set config: json decode failed, err=", err)
+		logrus.Errorln("ZlmDelFFmpegSource: json decode failed, err=", err)
 		return nil, err
 	}
 	if code, ok := resp["code"]; !ok || fmt.Sprint(code) != "0" {
-		logrus.Errorln("set config: response error")
-		return nil, errors.New("set config: response error")
+		logrus.Errorln("ZlmDelFFmpegSource: response error")
+		return nil, errors.New("ZlmDelFFmpegSource: response error")
 	}
-	logrus.Infof("invoke interface zlm-delFFmpegSource response:\n%s", resp)
+	logrus.Infof("invoke api ZlmDelFFmpegSource response:\n%s", resp)
 	return resp, nil
 }
 
 // 功能：关闭拉流代理(流注册成功后，也可以使用close_streams接口替代)
 //
 // 范例：http://127.0.0.1/index/api/delStreamProxy?key=__defaultVhost__/proxy/0
-func ZlmDelStreamProxye(params map[string]string) (map[string]interface{}, error) {
-	var str string
-	for k, v := range params {
-		str += "&" + k + "=" + v
-	}
-	body, err := utils.GetRequest(config.Media.RESTFUL + "/index/api/delStreamProxy?secret=" + config.Media.Secret + str)
+func ZlmDelStreamProxye(params map[string]any) (map[string]interface{}, error) {
+	body, err := utils.PostJSONRequest(config.Media.RESTFUL+"/index/api/delStreamProxy", params)
 	if err != nil {
-		logrus.Errorln("set server config failed, err=", err)
+		logrus.Errorln("ZlmDelStreamProxye failed, err=", err)
 		return nil, err
 	}
 	resp := map[string]interface{}{}
 	err = utils.JSONDecode(body, &resp)
 	if err != nil {
-		logrus.Errorln("set config: json decode failed, err=", err)
+		logrus.Errorln("ZlmDelStreamProxye: json decode failed, err=", err)
 		return nil, err
 	}
 	if code, ok := resp["code"]; !ok || fmt.Sprint(code) != "0" {
-		logrus.Errorln("set config: response error")
-		return nil, errors.New("set config: response error")
+		logrus.Errorln("ZlmDelStreamProxye: response error")
+		return nil, errors.New("ZlmDelStreamProxye: response error")
 	}
-	logrus.Infof("invoke interface zlm-delStreamProxy response:\n%s", resp)
+	logrus.Infof("invoke api ZlmDelStreamProxye response:\n%s", resp)
 	return resp, nil
 }
 
 // 功能：关闭推流
 //
 // 范例：http://127.0.0.1/index/api/delStreamPusherProxy?key=rtmp/defaultVhost/proxy/test/4AB43C9EABEB76AB443BB8260C8B2D12
-func ZlmDelStreamPusherProxy(params map[string]string) (map[string]interface{}, error) {
-	var str string
-	for k, v := range params {
-		str += "&" + k + "=" + v
-	}
-	body, err := utils.GetRequest(config.Media.RESTFUL + "/index/api/delStreamPusherProxy?secret=" + config.Media.Secret + str)
+func ZlmDelStreamPusherProxy(params map[string]any) (map[string]interface{}, error) {
+	body, err := utils.PostJSONRequest(config.Media.RESTFUL+"/index/api/delStreamPusherProxy", params)
 	if err != nil {
-		logrus.Errorln("set server config failed, err=", err)
+		logrus.Errorln("ZlmDelStreamPusherProxy failed, err=", err)
 		return nil, err
 	}
 	resp := map[string]interface{}{}
 	err = utils.JSONDecode(body, &resp)
 	if err != nil {
-		logrus.Errorln("set config: json decode failed, err=", err)
+		logrus.Errorln("ZlmDelStreamPusherProxy: json decode failed, err=", err)
 		return nil, err
 	}
 	if code, ok := resp["code"]; !ok || fmt.Sprint(code) != "0" {
-		logrus.Errorln("set config: response error")
-		return nil, errors.New("set config: response error")
+		logrus.Errorln("ZlmDelStreamPusherProxy: response error")
+		return nil, errors.New("ZlmDelStreamPusherProxy: response error")
 	}
-	logrus.Infof("invoke interface zlm-delStreamPusherProxy response:\n%s", resp)
+	logrus.Infof("invoke api ZlmDelStreamPusherProxy response:\n%s", resp)
 	return resp, nil
 }
 
 // 功能：获取所有TcpSession列表(获取所有tcp客户端相关信息)
 //
 // 范例：http://127.0.0.1/index/api/getAllSession
-func ZlmGetAllSession(params map[string]string) (map[string]interface{}, error) {
-	var str string
-	for k, v := range params {
-		str += "&" + k + "=" + v
-	}
-	body, err := utils.GetRequest(config.Media.RESTFUL + "/index/api/getAllSession?secret=" + config.Media.Secret + str)
+func ZlmGetAllSession(params map[string]any) (map[string]interface{}, error) {
+	body, err := utils.PostJSONRequest(config.Media.RESTFUL+"/index/api/getAllSession", params)
 	if err != nil {
-		logrus.Errorln("set server config failed, err=", err)
+		logrus.Errorln("ZlmGetAllSession failed, err=", err)
 		return nil, err
 	}
 	resp := map[string]interface{}{}
 	err = utils.JSONDecode(body, &resp)
 	if err != nil {
-		logrus.Errorln("set config: json decode failed, err=", err)
+		logrus.Errorln("ZlmGetAllSession: json decode failed, err=", err)
 		return nil, err
 	}
 	if code, ok := resp["code"]; !ok || fmt.Sprint(code) != "0" {
-		logrus.Errorln("set config: response error")
-		return nil, errors.New("set config: response error")
+		logrus.Errorln("ZlmGetAllSession: response error")
+		return nil, errors.New("ZlmGetAllSession: response error")
 	}
-	logrus.Infof("invoke interface zlm-getAllSession response:\n%s", resp)
+	logrus.Infof("invoke api ZlmGetAllSession response:\n%s", resp)
 	return resp, nil
 }
 
@@ -410,69 +369,65 @@ func ZlmGetAllSession(params map[string]string) (map[string]interface{}, error) 
 //
 // 范例：http://127.0.0.1/index/api/getApiList
 func ZlmGetApiList() (map[string]interface{}, error) {
-	body, err := utils.GetRequest(config.Media.RESTFUL + "/index/api/getApiList?secret=" + config.Media.Secret)
+	body, err := utils.GetRequest(config.Media.RESTFUL + "/index/api/getApiList")
 	if err != nil {
-		logrus.Errorln("set server config failed, err=", err)
+		logrus.Errorln("ZlmGetApiList failed, err=", err)
 		return nil, err
 	}
 	resp := map[string]interface{}{}
 	err = utils.JSONDecode(body, &resp)
 	if err != nil {
-		logrus.Errorln("set config: json decode failed, err=", err)
+		logrus.Errorln("ZlmGetApiList: json decode failed, err=", err)
 		return nil, err
 	}
 	if code, ok := resp["code"]; !ok || fmt.Sprint(code) != "0" {
-		logrus.Errorln("set config: response error")
-		return nil, errors.New("set config: response error")
+		logrus.Errorln("ZlmGetApiList: response error")
+		return nil, errors.New("ZlmGetApiList: response error")
 	}
-	logrus.Infof("invoke interface zlm-getApiList response:\n%s", resp)
+	logrus.Infof("invoke api ZlmGetApiList response:\n%s", resp)
 	return resp, nil
 }
 
 func ZlmGetMediaPlayerList() (map[string]interface{}, error) {
-	body, err := utils.GetRequest(config.Media.RESTFUL + "/index/api/getMediaPlayerList?secret=" + config.Media.Secret)
+	body, err := utils.GetRequest(config.Media.RESTFUL + "/index/api/getMediaPlayerList")
 	if err != nil {
-		logrus.Errorln("set server config failed, err=", err)
+		logrus.Errorln("ZlmGetMediaPlayerList failed, err=", err)
 		return nil, err
 	}
 	resp := map[string]interface{}{}
 	err = utils.JSONDecode(body, &resp)
 	if err != nil {
-		logrus.Errorln("set config: json decode failed, err=", err)
+		logrus.Errorln("ZlmGetMediaPlayerList: json decode failed, err=", err)
 		return nil, err
 	}
 	if code, ok := resp["code"]; !ok || fmt.Sprint(code) != "0" {
-		logrus.Errorln("set config: response error")
+		logrus.Errorln("ZlmGetMediaPlayerList: response error")
 		return nil, errors.New("set config: response error")
 	}
-	logrus.Infof("invoke interface zlm-getMediaPlayerList response:\n%s", resp)
+	logrus.Infof("invoke api ZlmGetMediaPlayerList response:\n%s", resp)
 	return resp, nil
 }
 
 // 功能：搜索文件系统，获取流对应的录像文件列表或日期文件夹列表
 //
 // 范例：http://127.0.0.1/index/api/getMp4RecordFile?vhost=__defaultVhost__&app=live&stream=ss&period=2020-01
-func ZlmGetMp4RecordFile(params map[string]string) (map[string]interface{}, error) {
-	var str string
-	for k, v := range params {
-		str += "&" + k + "=" + v
-	}
-	body, err := utils.GetRequest(config.Media.RESTFUL + "/index/api/getMp4RecordFile?secret=" + config.Media.Secret)
+func ZlmGetMp4RecordFile(params map[string]any) (map[string]interface{}, error) {
+	body, err := utils.PostJSONRequest(config.Media.RESTFUL+"/index/api/getMp4RecordFile", params)
 	if err != nil {
-		logrus.Errorln("set server config failed, err=", err)
+		logrus.Errorln("ZlmGetMp4RecordFile failed, err=", err)
 		return nil, err
 	}
 	resp := map[string]interface{}{}
 	err = utils.JSONDecode(body, &resp)
 	if err != nil {
-		logrus.Errorln("set config: json decode failed, err=", err)
+		logrus.Errorln("ZlmGetMp4RecordFile: json decode failed, err=", err)
 		return nil, err
 	}
 	if code, ok := resp["code"]; !ok || fmt.Sprint(code) != "0" {
-		logrus.Errorln("set config: response error")
-		return nil, errors.New("set config: response error")
+		logrus.Errorln("ZlmGetMp4RecordFile: response error")
+		return nil, errors.New("ZlmGetMp4RecordFile: response error")
 	}
-	logrus.Infof("invoke interface zlm-getMp4RecordFile response:\n%s", resp)
+	logrus.Infof("invoke api ZlmGetMp4RecordFile response:\n%s", resp)
 	return resp, nil
 }
 
@@ -480,49 +435,45 @@ func ZlmGetMp4RecordFile(params map[string]string) (map[string]interface{}, erro
 //
 // 范例：http://127.0.0.1/index/api/getServerConfig
 func ZlmGetServerConfig() (map[string]interface{}, error) {
-	body, err := utils.GetRequest(config.Media.RESTFUL + "/index/api/getServerConfig?secret=" + config.Media.Secret)
+	body, err := utils.GetRequest(config.Media.RESTFUL + "/index/api/getServerConfig")
 	if err != nil {
-		logrus.Errorln("set server config failed, err=", err)
+		logrus.Errorln("ZlmGetServerConfig failed, err=", err)
 		return nil, err
 	}
 	resp := map[string]interface{}{}
 	err = utils.JSONDecode(body, &resp)
 	if err != nil {
-		logrus.Errorln("set config: json decode failed, err=", err)
+		logrus.Errorln("ZlmGetServerConfig: json decode failed, err=", err)
 		return nil, err
 	}
 	if code, ok := resp["code"]; !ok || fmt.Sprint(code) != "0" {
-		logrus.Errorln("set config: response error")
-		return nil, errors.New("set config: response error")
+		logrus.Errorln("ZlmGetServerConfig: response error")
+		return nil, errors.New("ZlmGetServerConfig: response error")
 	}
-	logrus.Infof("invoke interface zlm-getServerConfig response:\n%s", resp)
+	logrus.Infof("invoke api ZlmGetServerConfig response:\n%s", resp)
 	return resp, nil
 }
 
 // 功能：获取截图或生成实时截图并返回
 //
 // 范例：http://127.0.0.1/index/api/getSnap?url=rtmp://127.0.0.1/record/robot.mp4&timeout_sec=10&expire_sec=30
-func ZlmGetSnap(params map[string]string) (map[string]interface{}, error) {
-	var str string
-	for k, v := range params {
-		str += "&" + k + "=" + v
-	}
-	body, err := utils.GetRequest(config.Media.RESTFUL + "/index/api/getSnap?secret=" + config.Media.Secret)
+func ZlmGetSnap(params map[string]any) (map[string]interface{}, error) {
+	body, err := utils.PostJSONRequest(config.Media.RESTFUL+"/index/api/getSnap", params)
 	if err != nil {
-		logrus.Errorln("set server config failed, err=", err)
+		logrus.Errorln("ZlmGetSnap failed, err=", err)
 		return nil, err
 	}
 	resp := map[string]interface{}{}
 	err = utils.JSONDecode(body, &resp)
 	if err != nil {
-		logrus.Errorln("set config: json decode failed, err=", err)
+		logrus.Errorln("ZlmGetSnap: json decode failed, err=", err)
 		return nil, err
 	}
 	if code, ok := resp["code"]; !ok || fmt.Sprint(code) != "0" {
-		logrus.Errorln("set config: response error")
-		return nil, errors.New("set config: response error")
+		logrus.Errorln("ZlmGetSnap: response error")
+		return nil, errors.New("ZlmGetSnap: response error")
 	}
-	logrus.Infof("invoke interface zlm-getSnap response:\n%s", resp)
+	logrus.Infof("invoke api ZlmGetSnap response:\n%s", resp)
 	return resp, nil
 }
 
@@ -530,22 +481,22 @@ func ZlmGetSnap(params map[string]string) (map[string]interface{}, error) {
 //
 // 范例：http://127.0.0.1/index/api/getStatistic?secret=035c73f7-bb6b-4889-a715-d9eb2d1925cc
 func ZlmGetStatistic() (map[string]interface{}, error) {
-	body, err := utils.GetRequest(config.Media.RESTFUL + "/index/api/getStatistic?secret=" + config.Media.Secret)
+	body, err := utils.GetRequest(config.Media.RESTFUL + "/index/api/getStatistic")
 	if err != nil {
-		logrus.Errorln("set server config failed, err=", err)
+		logrus.Errorln("ZlmGetStatistic failed, err=", err)
 		return nil, err
 	}
 	resp := map[string]interface{}{}
 	err = utils.JSONDecode(body, &resp)
 	if err != nil {
-		logrus.Errorln("set config: json decode failed, err=", err)
+		logrus.Errorln("ZlmGetStatistic: json decode failed, err=", err)
 		return nil, err
 	}
 	if code, ok := resp["code"]; !ok || fmt.Sprint(code) != "0" {
-		logrus.Errorln("set config: response error")
-		return nil, errors.New("set config: response error")
+		logrus.Errorln("ZlmGetStatistic: response error")
+		return nil, errors.New("ZlmGetStatistic: response error")
 	}
-	logrus.Infof("invoke interface zlm-getStatistic response:\n%s", resp)
+	logrus.Infof("invoke api ZlmGetStatistic response:\n%s", resp)
 	return resp, nil
 }
 
@@ -553,22 +504,22 @@ func ZlmGetStatistic() (map[string]interface{}, error) {
 //
 // 范例：http://127.0.0.1/index/api/getThreadsLoad
 func ZlmGetThreadsLoad() (map[string]interface{}, error) {
-	body, err := utils.GetRequest(config.Media.RESTFUL + "/index/api/getThreadsLoad?secret=" + config.Media.Secret)
+	body, err := utils.GetRequest(config.Media.RESTFUL + "/index/api/getThreadsLoad")
 	if err != nil {
-		logrus.Errorln("set server config failed, err=", err)
+		logrus.Errorln("ZlmGetThreadsLoad failed, err=", err)
 		return nil, err
 	}
 	resp := map[string]interface{}{}
 	err = utils.JSONDecode(body, &resp)
 	if err != nil {
-		logrus.Errorln("set config: json decode failed, err=", err)
+		logrus.Errorln("ZlmGetThreadsLoad: json decode failed, err=", err)
 		return nil, err
 	}
 	if code, ok := resp["code"]; !ok || fmt.Sprint(code) != "0" {
-		logrus.Errorln("set config: response error")
-		return nil, errors.New("set config: response error")
+		logrus.Errorln("ZlmGetThreadsLoad: response error")
+		return nil, errors.New("ZlmGetThreadsLoad: response error")
 	}
-	logrus.Infof("invoke interface zlm-getThreadsLoad response:\n%s", resp)
+	logrus.Infof("invoke api ZlmGetThreadsLoad response:\n%s", resp)
 	return resp, nil
 }
 
@@ -576,130 +527,114 @@ func ZlmGetThreadsLoad() (map[string]interface{}, error) {
 //
 // 范例：http://127.0.0.1/index/api/getWorkThreadsLoad
 func ZlmGetWorkThreadsLoad() (map[string]interface{}, error) {
-	body, err := utils.GetRequest(config.Media.RESTFUL + "/index/api/getWorkThreadsLoad?secret=" + config.Media.Secret)
+	body, err := utils.GetRequest(config.Media.RESTFUL + "/index/api/getWorkThreadsLoad")
 	if err != nil {
-		logrus.Errorln("set server config failed, err=", err)
+		logrus.Errorln("ZlmGetWorkThreadsLoad failed, err=", err)
 		return nil, err
 	}
 	resp := map[string]interface{}{}
 	err = utils.JSONDecode(body, &resp)
 	if err != nil {
-		logrus.Errorln("set config: json decode failed, err=", err)
+		logrus.Errorln("ZlmGetWorkThreadsLoad: json decode failed, err=", err)
 		return nil, err
 	}
 	if code, ok := resp["code"]; !ok || fmt.Sprint(code) != "0" {
-		logrus.Errorln("set config: response error")
-		return nil, errors.New("set config: response error")
+		logrus.Errorln("ZlmGetWorkThreadsLoad: response error")
+		return nil, errors.New("ZlmGetWorkThreadsLoad: response error")
 	}
-	logrus.Infof("invoke interface zlm-getWorkThreadsLoad response:\n%s", resp)
+	logrus.Infof("invoke api ZlmGetWorkThreadsLoad response:\n%s", resp)
 	return resp, nil
 }
 
 // 功能：判断直播流是否在线(已过期，请使用getMediaList接口替代)
 //
 // 范例：http://127.0.0.1/index/api/isMediaOnline?schema=rtsp&vhost=__defaultVhost__&app=live&stream=obs
-func ZlmIsMediaOnline(params map[string]string) (map[string]interface{}, error) {
-	var str string
-	for k, v := range params {
-		str += "&" + k + "=" + v
-	}
-	body, err := utils.GetRequest(config.Media.RESTFUL + "/index/api/isMediaOnline?secret=" + config.Media.Secret + str)
+func ZlmIsMediaOnline(params map[string]any) (map[string]interface{}, error) {
+	body, err := utils.PostJSONRequest(config.Media.RESTFUL+"/index/api/isMediaOnline", params)
 	if err != nil {
-		logrus.Errorln("set server config failed, err=", err)
+		logrus.Errorln("ZlmIsMediaOnline failed, err=", err)
 		return nil, err
 	}
 	resp := map[string]interface{}{}
 	err = utils.JSONDecode(body, &resp)
 	if err != nil {
-		logrus.Errorln("set config: json decode failed, err=", err)
+		logrus.Errorln("ZlmIsMediaOnline: json decode failed, err=", err)
 		return nil, err
 	}
 	if code, ok := resp["code"]; !ok || fmt.Sprint(code) != "0" {
-		logrus.Errorln("set config: response error")
-		return nil, errors.New("set config: response error")
+		logrus.Errorln("ZlmIsMediaOnline: response error")
+		return nil, errors.New("ZlmIsMediaOnline: response error")
 	}
-	logrus.Infof("invoke interface zlm-isMediaOnline response:\n%s", resp)
+	logrus.Infof("invoke api ZlmIsMediaOnline response:\n%s", resp)
 	return resp, nil
 }
 
 // 功能：获取流录制状态
 //
 // 范例：http://127.0.0.1/index/api/isRecording?type=1&vhost=__defaultVhost__&app=live&stream=obs
-func ZlmIsRecording(params map[string]string) (map[string]interface{}, error) {
-	var str string
-	for k, v := range params {
-		str += "&" + k + "=" + v
-	}
-	body, err := utils.GetRequest(config.Media.RESTFUL + "/index/api/isRecording?secret=" + config.Media.Secret + str)
+func ZlmIsRecording(params map[string]any) (map[string]interface{}, error) {
+	body, err := utils.PostJSONRequest(config.Media.RESTFUL+"/index/api/isRecording", params)
 	if err != nil {
-		logrus.Errorln("set server config failed, err=", err)
+		logrus.Errorln("ZlmIsRecording, err=", err)
 		return nil, err
 	}
 	resp := map[string]interface{}{}
 	err = utils.JSONDecode(body, &resp)
 	if err != nil {
-		logrus.Errorln("set config: json decode failed, err=", err)
+		logrus.Errorln("ZlmIsRecording: json decode failed, err=", err)
 		return nil, err
 	}
 	if code, ok := resp["code"]; !ok || fmt.Sprint(code) != "0" {
-		logrus.Errorln("set config: response error")
-		return nil, errors.New("set config: response error")
+		logrus.Errorln("ZlmIsRecording: response error")
+		return nil, errors.New("ZlmIsRecording: response error")
 	}
-	logrus.Infof("invoke interface zlm-isRecording response:\n%s", resp)
+	logrus.Infof("invoke api ZlmIsRecording response:\n%s", resp)
 	return resp, nil
 }
 
 // 功能：断开tcp连接，比如说可以断开rtsp、rtmp播放器等
 //
 // 范例：http://127.0.0.1/index/api/kick_session?id=140614440178720
-func ZlmKickSession(params map[string]string) (map[string]interface{}, error) {
-	var str string
-	for k, v := range params {
-		str += "&" + k + "=" + v
-	}
-	body, err := utils.GetRequest(config.Media.RESTFUL + "/index/api/kick_session?secret=" + config.Media.Secret + str)
+func ZlmKickSession(params map[string]any) (map[string]interface{}, error) {
+	body, err := utils.PostJSONRequest(config.Media.RESTFUL+"/index/api/kick_session", params)
 	if err != nil {
-		logrus.Errorln("set server config failed, err=", err)
+		logrus.Errorln("ZlmKickSession failed, err=", err)
 		return nil, err
 	}
 	resp := map[string]interface{}{}
 	err = utils.JSONDecode(body, &resp)
 	if err != nil {
-		logrus.Errorln("set config: json decode failed, err=", err)
+		logrus.Errorln("ZlmKickSession: json decode failed, err=", err)
 		return nil, err
 	}
 	if code, ok := resp["code"]; !ok || fmt.Sprint(code) != "0" {
-		logrus.Errorln("set config: response error")
-		return nil, errors.New("set config: response error")
+		logrus.Errorln("ZlmKickSession: response error")
+		return nil, errors.New("ZlmKickSession: response error")
 	}
-	logrus.Infof("invoke interface zlm-kick_session response:\n%s", resp)
+	logrus.Infof("invoke api ZlmKickSession response:\n%s", resp)
 	return resp, nil
 }
 
 // 功能：断开tcp连接，比如说可以断开rtsp、rtmp播放器等
 //
 // 范例：http://127.0.0.1/index/api/kick_sessions?local_port=554
-func ZlmKickSessions(params map[string]string) (map[string]interface{}, error) {
-	var str string
-	for k, v := range params {
-		str += "&" + k + "=" + v
-	}
-	body, err := utils.GetRequest(config.Media.RESTFUL + "/index/api/kick_sessions?secret=" + config.Media.Secret + str)
+func ZlmKickSessions(params map[string]any) (map[string]interface{}, error) {
+	body, err := utils.PostJSONRequest(config.Media.RESTFUL+"/index/api/kick_sessions", params)
 	if err != nil {
-		logrus.Errorln("set server config failed, err=", err)
+		logrus.Errorln("ZlmKickSessions failed, err=", err)
 		return nil, err
 	}
 	resp := map[string]interface{}{}
 	err = utils.JSONDecode(body, &resp)
 	if err != nil {
-		logrus.Errorln("set config: json decode failed, err=", err)
+		logrus.Errorln("ZlmKickSessions: json decode failed, err=", err)
 		return nil, err
 	}
-	if code, ok := resp["code"]; !ok || fmt.Sprint(code) != "0" {
-		logrus.Errorln("set config: response error")
-		return nil, errors.New("set config: response error")
+	if _, ok := resp["code"]; !ok {
+		logrus.Errorln("ZlmKickSessions: response error")
+		return nil, errors.New("ZlmKickSessions: response error")
 	}
-	logrus.Infof("invoke interface zlm-kick_sessions response:\n%s", resp)
+	logrus.Infof("invoke api ZlmKickSessions response:\n%s", resp)
 	return resp, nil
 }
 
@@ -707,49 +642,45 @@ func ZlmKickSessions(params map[string]string) (map[string]interface{}, error) {
 //
 // 范例：http://127.0.0.1/index/api/listRtpServer
 func ZlmListRtpServer() (map[string]interface{}, error) {
-	body, err := utils.GetRequest(config.Media.RESTFUL + "/index/api/listRtpServer?secret=" + config.Media.Secret)
+	body, err := utils.GetRequest(config.Media.RESTFUL + "/index/api/listRtpServer")
 	if err != nil {
-		logrus.Errorln("set server config failed, err=", err)
+		logrus.Errorln("ZlmListRtpServer failed, err=", err)
 		return nil, err
 	}
 	resp := map[string]interface{}{}
 	err = utils.JSONDecode(body, &resp)
 	if err != nil {
-		logrus.Errorln("set config: json decode failed, err=", err)
+		logrus.Errorln("ZlmListRtpServer: json decode failed, err=", err)
 		return nil, err
 	}
 	if code, ok := resp["code"]; !ok || fmt.Sprint(code) != "0" {
-		logrus.Errorln("set config: response error")
-		return nil, errors.New("set config: response error")
+		logrus.Errorln("ZlmListRtpServer: response error")
+		return nil, errors.New("ZlmListRtpServer: response error")
 	}
-	logrus.Infof("invoke interface zlm-listRtpServer response:\n%s", resp)
+	logrus.Infof("invoke api ZlmListRtpServer response:\n%s", resp)
 	return resp, nil
 }
 
 // 功能：创建GB28181 RTP接收端口，如果该端口接收数据超时，则会自动被回收(不用调用closeRtpServer接口)
 //
 // 范例：http://127.0.0.1/index/api/openRtpServer?port=0&tcp_mode=1&stream_id=test
-func ZlmOpenRtpServer(params map[string]string) (map[string]interface{}, error) {
-	var str string
-	for k, v := range params {
-		str += "&" + k + "=" + v
-	}
-	body, err := utils.GetRequest(config.Media.RESTFUL + "/index/api/openRtpServer?secret=" + config.Media.Secret + str)
+func ZlmOpenRtpServer(params map[string]any) (map[string]interface{}, error) {
+	body, err := utils.PostJSONRequest(config.Media.RESTFUL+"/index/api/openRtpServer", params)
 	if err != nil {
-		logrus.Errorln("set server config failed, err=", err)
+		logrus.Errorln("ZlmOpenRtpServer failed, err=", err)
 		return nil, err
 	}
 	resp := map[string]interface{}{}
 	err = utils.JSONDecode(body, &resp)
 	if err != nil {
-		logrus.Errorln("set config: json decode failed, err=", err)
+		logrus.Errorln("ZlmOpenRtpServer: json decode failed, err=", err)
 		return nil, err
 	}
 	if code, ok := resp["code"]; !ok || fmt.Sprint(code) != "0" {
-		logrus.Errorln("set config: response error")
-		return nil, errors.New("set config: response error")
+		logrus.Errorln("ZlmOpenRtpServer: response error")
+		return nil, errors.New("ZlmOpenRtpServer: response error")
 	}
-	logrus.Infof("invoke interface zlm-openRtpServer response:\n%s", resp)
+	logrus.Infof("invoke api ZlmOpenRtpServer response:\n%s", resp)
 	return resp, nil
 }
 
@@ -757,7 +688,7 @@ func ZlmOpenRtpServer(params map[string]string) (map[string]interface{}, error) 
 //
 // 范例：http://127.0.0.1/index/api/restartServer
 func ZlmRestartServer() (map[string]interface{}, error) {
-	body, err := utils.GetRequest(config.Media.RESTFUL + "/index/api/restartServer?secret=" + config.Media.Secret)
+	body, err := utils.GetRequest(config.Media.RESTFUL + "/index/api/restartServer")
 	if err != nil {
 		logrus.Errorln("ZlmRestartServer failed, err=", err)
 		return nil, err
@@ -779,89 +710,77 @@ func ZlmRestartServer() (map[string]interface{}, error) {
 // 功能：作为GB28181客户端，启动ps-rtp推流，支持rtp/udp方式；该接口支持rtsp/rtmp等协议转ps-rtp推流。第一次推流失败会直接返回错误，成功一次后，后续失败也将无限重试。
 //
 // 范例：http://127.0.0.1/index/api/startSendRtp?secret=035c73f7-bb6b-4889-a715-d9eb2d1925cc&vhost=__defaultVhost__&app=live&stream=test&ssrc=1&dst_url=127.0.0.1&dst_port=10000&is_udp=0
-func ZlmStartSendRtp(params map[string]string) (map[string]interface{}, error) {
-	var str string
-	for k, v := range params {
-		str += "&" + k + "=" + v
-	}
-	body, err := utils.GetRequest(config.Media.RESTFUL + "/index/api/startSendRtp?secret=" + config.Media.Secret)
+func ZlmStartSendRtp(params map[string]any) (map[string]interface{}, error) {
+	body, err := utils.PostJSONRequest(config.Media.RESTFUL+"/index/api/startSendRtp", params)
 	if err != nil {
-		logrus.Errorln("set server config failed, err=", err)
+		logrus.Errorln("ZlmStartSendRtp failed, err=", err)
 		return nil, err
 	}
 	resp := map[string]interface{}{}
 	err = utils.JSONDecode(body, &resp)
 	if err != nil {
-		logrus.Errorln("set config: json decode failed, err=", err)
+		logrus.Errorln("ZlmStartSendRtp: json decode failed, err=", err)
 		return nil, err
 	}
 	if code, ok := resp["code"]; !ok || fmt.Sprint(code) != "0" {
-		logrus.Errorln("set config: response error")
-		return nil, errors.New("set config: response error")
+		logrus.Errorln("ZlmStartSendRtp: response error")
+		return nil, errors.New("ZlmStartSendRtp: response error")
 	}
-	logrus.Infof("invoke interface zlm-startSendRtp response:\n%s", resp)
+	logrus.Infof("invoke api ZlmStartSendRtp response:\n%s", resp)
 	return resp, nil
 }
 
 // 功能：作为GB28181 Passive TCP服务器；该接口支持rtsp/rtmp等协议转ps-rtp被动推流。调用该接口，zlm会启动tcp服务器等待连接请求，连接建立后，zlm会关闭tcp服务器，然后源源不断的往客户端推流。第一次推流失败会直接返回错误，成功一次后，后续失败也将无限重试(不停地建立tcp监听，超时后再关闭)。
 //
 // 范例：http://127.0.0.1/index/api/startSendRtpPassive?secret=035c73f7-bb6b-4889-a715-d9eb2d1925cc&vhost=__defaultVhost__&app=live&stream=test&ssrc=1
-func ZlmStartSendRtpPassive(params map[string]string) (map[string]interface{}, error) {
-	var str string
-	for k, v := range params {
-		str += "&" + k + "=" + v
-	}
-	body, err := utils.GetRequest(config.Media.RESTFUL + "/index/api/startSendRtpPassive?secret=" + config.Media.Secret + str)
+func ZlmStartSendRtpPassive(params map[string]any) (map[string]interface{}, error) {
+	body, err := utils.PostJSONRequest(config.Media.RESTFUL+"/index/api/startSendRtpPassive", params)
 	if err != nil {
-		logrus.Errorln("set server config failed, err=", err)
+		logrus.Errorln("ZlmStartSendRtpPassive failed, err=", err)
 		return nil, err
 	}
 	resp := map[string]interface{}{}
 	err = utils.JSONDecode(body, &resp)
 	if err != nil {
-		logrus.Errorln("set config: json decode failed, err=", err)
+		logrus.Errorln("ZlmStartSendRtpPassive: json decode failed, err=", err)
 		return nil, err
 	}
 	if code, ok := resp["code"]; !ok || fmt.Sprint(code) != "0" {
-		logrus.Errorln("set config: response error")
-		return nil, errors.New("set config: response error")
+		logrus.Errorln("ZlmStartSendRtpPassive: response error")
+		return nil, errors.New("ZlmStartSendRtpPassive: response error")
 	}
-	logrus.Infof("invoke interface zlm-startSendRtpPassive response:\n%s", resp)
+	logrus.Infof("invoke api ZlmStartSendRtpPassive response:\n%s", resp)
 	return resp, nil
 }
 
 // 功能：停止GB28181 ps-rtp推流
 //
 // 范例：http://127.0.0.1/index/api/stopSendRtp?secret=035c73f7-bb6b-4889-a715-d9eb2d1925cc&vhost=__defaultVhost__&app=live&stream=test
-func ZlmStopSendRtp(params map[string]string) (map[string]interface{}, error) {
-	var str string
-	for k, v := range params {
-		str += "&" + k + "=" + v
-	}
-	body, err := utils.GetRequest(config.Media.RESTFUL + "/index/api/stopSendRtp?secret=" + config.Media.Secret + str)
+func ZlmStopSendRtp(params map[string]any) (map[string]interface{}, error) {
+	body, err := utils.PostJSONRequest(config.Media.RESTFUL+"/index/api/stopSendRtp", params)
 	if err != nil {
-		logrus.Errorln("set server config failed, err=", err)
+		logrus.Errorln("ZlmStopSendRtp failed, err=", err)
 		return nil, err
 	}
 	resp := map[string]interface{}{}
 	err = utils.JSONDecode(body, &resp)
 	if err != nil {
-		logrus.Errorln("set config: json decode failed, err=", err)
+		logrus.Errorln("ZlmStopSendRtp: json decode failed, err=", err)
 		return nil, err
 	}
 	if code, ok := resp["code"]; !ok || fmt.Sprint(code) != "0" {
-		logrus.Errorln("set config: response error")
-		return nil, errors.New("set config: response error")
+		logrus.Errorln("ZlmStopSendRtp: response error")
+		return nil, errors.New("ZlmStopSendRtp: response error")
 	}
-	logrus.Infof("invoke interface zlm-stopSendRtp response:\n%s", resp)
+	logrus.Infof("invoke api ZlmStopSendRtp response:\n%s", resp)
 	return resp, nil
 }
 
 // 功能：获取版本信息，如分支，commit id, 编译时间
 //
 // 范例：http://127.0.0.1/index/api/version
-func ZlmVersion() (map[string]interface{}, error) {
-	body, err := utils.GetRequest(config.Media.RESTFUL + "/index/api/version?secret=" + config.Media.Secret)
+func ZlmVersion() (map[string]any, error) {
+	body, err := utils.GetRequest(config.Media.RESTFUL + "/index/api/version")
 	if err != nil {
 		logrus.Errorln("ZlmVersion failed, err=", err)
 		return nil, err
@@ -876,19 +795,15 @@ func ZlmVersion() (map[string]interface{}, error) {
 		logrus.Errorln("ZlmVersion: response error")
 		return nil, errors.New("ZlmVersion: response error")
 	}
-	logrus.Infof("ZlmVersion response:\n%s", resp)
+	logrus.Infof("invoke api ZlmVersion response:\n%s", resp)
 	return resp, nil
 }
 
 // 功能：设置zlm配置
 //
 // 范例：http://127.0.0.1/index/api/setServerConfig?api.apiDebug=0(例如关闭http api调试)
-func ZlmSetServerConfig(params map[string]string) (map[string]interface{}, error) {
-	var str string
-	for k, v := range params {
-		str += "&" + k + "=" + v
-	}
-	body, err := utils.GetRequest(config.Media.RESTFUL + "/index/api/setServerConfig?secret=" + config.Media.Secret + str)
+func ZlmSetServerConfig(params map[string]any) (map[string]interface{}, error) {
+	body, err := utils.PostJSONRequest(config.Media.RESTFUL+"/index/api/setServerConfig", params)
 	if err != nil {
 		logrus.Errorln("ZlmSetServerConfig failed, err=", err)
 		return nil, err
@@ -908,7 +823,7 @@ func ZlmSetServerConfig(params map[string]string) (map[string]interface{}, error
 }
 
 // 功能: 同步hook到zlm配置文件
-func SyncWebhook2ZlmConfig() (map[string]interface{}, error) {
+func syncWebhook2ZlmConfig() (map[string]interface{}, error) {
 	hookURL := fmt.Sprintf("http://%s/index/hook/", config.API)
 	params := map[string]string{}
 	params["hook.enable"] = "1"
@@ -934,20 +849,20 @@ func SyncWebhook2ZlmConfig() (map[string]interface{}, error) {
 	}
 	body, err := utils.GetRequest(config.Media.RESTFUL + "/index/api/setServerConfig?secret=" + config.Media.Secret + str)
 	if err != nil {
-		logrus.Errorln("SyncWebhook2ZlmConfig failed, err=", err)
+		logrus.Errorln("syncWebhook2ZlmConfig failed, err=", err)
 		return nil, err
 	}
 	resp := map[string]interface{}{}
 	err = utils.JSONDecode(body, &resp)
 	if err != nil {
-		logrus.Errorln("SyncWebhook2ZlmConfig: json decode failed, err=", err)
+		logrus.Errorln("syncWebhook2ZlmConfig: json decode failed, err=", err)
 		return nil, err
 	}
 	if code, ok := resp["code"]; !ok || fmt.Sprint(code) != "0" {
-		logrus.Errorln("SyncWebhook2ZlmConfig: response error")
-		return nil, errors.New("SyncWebhook2ZlmConfig: response error")
+		logrus.Errorln("syncWebhook2ZlmConfig: response error")
+		return nil, errors.New("syncWebhook2ZlmConfig: response error")
 	}
-	logrus.Infof("SyncWebhook2ZlmConfig response:\n%s", resp)
+	logrus.Infof("syncWebhook2ZlmConfig response:\n%s", resp)
 	return resp, nil
 }
 
