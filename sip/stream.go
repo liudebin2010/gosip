@@ -65,6 +65,16 @@ type streamsList struct {
 
 var StreamList streamsList
 
+type playList struct {
+	// key=ssrc value=PlayParams  播放对应的PlayParams 用来发送bye获取tag，callid等数据
+	ssrcResponse *sync.Map
+	// key=deviceid value={ssrc,path}  当前设备直播信息，防止重复直播
+	devicesSucc *sync.Map
+	ssrc        int
+}
+
+var _playList playList
+
 // 获取ssrc
 func getSSRC(t int) string {
 	r := false

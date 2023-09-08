@@ -9,7 +9,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-var activeTX *transacionts
+var activeTX, casActTX *transacionts
 
 type transacionts struct {
 	txs map[string]*Transaction
@@ -134,4 +134,18 @@ func getTXKey(msg Message) (key string) {
 		key = utils.RandString(10)
 	}
 	return
+}
+
+// CasRequest Request
+func (tx *Transaction) CasRequest(req *Request) error {
+	_, err := tx.conn.Write([]byte(req.String())) // 发送到相机地址
+	// utils.CusLog.Debugf("CasRequest write msg:\n%s, \nerr=%+v", req.String(), err)
+	return err
+}
+
+// CasResponse Response
+func (tx *Transaction) CasResponse(res *Response) error {
+	_, err := tx.conn.Write([]byte(res.String()))
+	// utils.CusLog.Debugf("CasResponse write msg:\n%s, \nerr=%+v", res.String(), err)
+	return err
 }

@@ -17,6 +17,7 @@ require (
 	github.com/swaggo/swag v1.8.6
 	golang.org/x/net v0.0.0-20220909164309-bea034e7d591
 	golang.org/x/text v0.3.7
+	gopkg.in/errgo.v2 v2.1.0
 )
 
 require (

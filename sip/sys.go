@@ -2,17 +2,21 @@ package sipapi
 
 import (
 	"fmt"
-	"net"
-	"net/http"
-	"net/url"
-	"strconv"
-	"sync"
-
 	"github.com/panjjo/gosip/db"
 	"github.com/panjjo/gosip/m"
 	sip "github.com/panjjo/gosip/sip/s"
 	"github.com/panjjo/gosip/utils"
 	"github.com/sirupsen/logrus"
+	"net"
+	"net/http"
+	"net/url"
+	"strconv"
+	"sync"
+)
+
+var (
+	// sip服务用户信息
+	cascadeSrv *sip.Server
 )
 
 func Start() {
@@ -22,16 +26,38 @@ func Start() {
 	db.DBClient.AutoMigrate(new(Streams))
 	db.DBClient.AutoMigrate(new(m.SysInfo))
 	db.DBClient.AutoMigrate(new(Files))
+	db.DBClient.AutoMigrate(new(m.MediaServer))
+	db.DBClient.AutoMigrate(new(m.Cascade))
 
 	// 加载系统信息
 	LoadSYSInfo()
 	// 服务启动时将ZLM的回调写到ZLM服务器配置文件上
 	syncWebhook2ZlmConfig()
 
-	srv = sip.NewServer()
+	// SIP服务器
+	srv := sip.NewServer()
 	srv.RegistHandler(sip.REGISTER, handlerRegister) //处理下级设备的注册请求
 	srv.RegistHandler(sip.MESSAGE, handlerMessage)   //处理下级设备发来的消息
-	go srv.ListenUDPServer(config.UDP)
+	go srv.ListenUDPServer(config.GB28181.UDP)
+
+	go cascadeInit()
+	//go func() {
+	// 创建级联服务
+	// 连接上级平台
+	//cascadeSrv := sip.NewServer()
+	//cascadeSrv.RegistHandler(sip.REGISTER, casHandlerRegister)
+	//cascadeSrv.RegistHandler(sip.MESSAGE, casHandlerMessage)
+	//cascadeSrv.RegistHandler(sip.SUBSCRIBE, casHandlerSubscribe)
+	//cascadeSrv.RegistHandler(sip.INVITE, casHandlerInvite)
+	//cascadeSrv.RegistHandler(sip.INFO, casHandlerInfo)
+	//cascadeSrv.RegistHandler(sip.ACK, casHandlerAck)
+	//cascadeSrv.RegistHandler(sip.BYE, casHandlerBye)
+	//go cascadeSrv.ListenCasUDPServer(config.Cascade.SUDP, config.Cascade.LUDP)
+	//time.Sleep(time.Duration(2) * time.Second)
+	//casSendFirstRegister()
+	//casKeepAliveCron()
+	//}()
+
 }
 
 // MODDEBUG MODDEBUG

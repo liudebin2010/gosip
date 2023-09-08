@@ -44,7 +44,8 @@ func NewRequest(
 
 // NewRequestFromResponse NewRequestFromResponse
 func NewRequestFromResponse(method RequestMethod, inviteResponse *Response) *Request {
-	contact, _ := inviteResponse.Contact()
+	//contact, _ := inviteResponse.Contact()
+	contact, _ := inviteResponse.From()
 	ackRequest := NewRequest(
 		inviteResponse.MessageID(),
 		method,

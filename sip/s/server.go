@@ -12,6 +12,9 @@ import (
 
 var (
 	bufferSize uint16 = 65535 - 20 - 8 // IPv4 max size - IPv4 Header size - UDP Header size
+	// bufferSize     uint16 = 65535 - 20 - 8 // IPv4 max size - IPv4 Header size - UDP Header size
+	srvParser      *parser
+	LoAddr, ReAddr net.Addr
 )
 
 // RequestHandler RequestHandler
@@ -34,15 +37,28 @@ type Server struct {
 // NewServer NewServer
 func NewServer() *Server {
 	activeTX = &transacionts{txs: map[string]*Transaction{}, rwm: &sync.RWMutex{}}
-	srv := &Server{hmu: &sync.RWMutex{},
+	srv := &Server{
+		hmu:             &sync.RWMutex{},
 		txs:             activeTX,
-		requestHandlers: map[RequestMethod]RequestHandler{}}
+		requestHandlers: map[RequestMethod]RequestHandler{},
+	}
 	return srv
 }
 
-// func (s *Server) newTX(key string) *Transaction {
-// 	return s.txs.newTX(key, s.conn)
-// }
+// CasNewServer CasNewServer
+func CasNewServer() *Server {
+	casActTX = &transacionts{txs: map[string]*Transaction{}, rwm: &sync.RWMutex{}}
+	srv := &Server{
+		hmu:             &sync.RWMutex{},
+		txs:             casActTX,
+		requestHandlers: map[RequestMethod]RequestHandler{},
+	}
+	return srv
+}
+
+//	func (s *Server) newTX(key string) *Transaction {
+//		return s.txs.newTX(key, s.conn)
+//	}
 func (s *Server) getTX(key string) *Transaction {
 	return s.txs.getTX(key)
 }
@@ -87,6 +103,45 @@ func (s *Server) ListenUDPServer(addr string) {
 		parser.in <- newPacket(append([]byte{}, buf[:num]...), raddr)
 	}
 }
+
+/*
+// ListenUDPServer ListenUDPServer
+func (s *Server) ListenCasUDPServer(raddr, laddr string) {
+	lAddr, err := net.ResolveUDPAddr("udp", laddr)
+	if err != nil {
+		logrus.Fatalf("CreateUDPServer resolve local addr failed, addr=%s, err=%s", laddr, err.Error())
+	}
+	s.udpaddr = lAddr
+	s.port = NewPort(lAddr.Port)
+	s.host, err = utils.ResolveSelfIP()
+	if err != nil {
+		logrus.Fatalf("CreateUDPServer resolveip failed, addr=%s, err=%s", laddr, err.Error())
+	}
+
+	rAddr, err := net.ResolveUDPAddr("udp", raddr)
+	if err != nil {
+		logrus.Fatalf("CreateUDPServer resolve remote addr failed, addr=%s, err=%s", raddr, err.Error())
+	}
+	udp, err := net.DialUDP("udp", lAddr, rAddr)
+	if err != nil {
+		logrus.Fatalf("CreateUDPServer dialudp failed, laddr=%s, raddr=%s, err=%s", laddr, raddr, err.Error())
+	}
+	s.conn = newUDPConnection(udp)
+	srvParser := newParser()
+
+	defer srvParser.stop()
+	buf := make([]byte, bufferSize)
+	go s.handlerListen(srvParser.out)
+
+	for {
+		num, readdr, err := s.conn.ReadFrom(buf)
+		if err != nil {
+			logrus.Errorf("ListenUDPServer read data failed, err=%s, data=%s", err.Error(), string(buf))
+			continue
+		}
+		srvParser.in <- newPacket(buf[:num], readdr)
+	}
+}*/
 
 // RegistHandler RegistHandler
 func (s *Server) RegistHandler(method RequestMethod, handler RequestHandler) {
@@ -160,3 +215,51 @@ func handlerMethodNotAllowed(req *Request, tx *Transaction) {
 	resp := NewResponseFromRequest("", req, http.StatusMethodNotAllowed, http.StatusText(http.StatusMethodNotAllowed), []byte{})
 	tx.Respond(resp)
 }
+
+/*
+// Request Request
+func (s *Server) CasRequest(req *Request) (*Transaction, error) {
+	viaHop, ok := req.ViaHop()
+	if !ok {
+		return nil, errors.New("missing required 'Via' header")
+	}
+	viaHop.Host = s.host.String()
+	viaHop.Port = s.port
+	if viaHop.Params == nil {
+		viaHop.Params = NewParams().Add("branch", String{Str: GenerateBranch()})
+	}
+	if !viaHop.Params.Has("rport") {
+		viaHop.Params.Add("rport", nil)
+	}
+
+	tx := s.mustTX(getTXKey(req))
+	return tx, tx.CasRequest(req)
+}
+
+func (s *Server) CasSipResponse(tx *Transaction) (*Response, error) {
+	response := tx.GetResponse()
+	if response == nil {
+		return nil, utils.NewError(nil, "response timeout, tx key:", tx.Key())
+	}
+	if response.StatusCode() != http.StatusOK {
+		return response, utils.NewError(nil, "response fail, code=", response.StatusCode(), ", reason=", response.Reason(), ", tx key:", tx.Key())
+	}
+	return response, nil
+}
+
+func (s *Server) CasWrite(buf []byte) (int, error) {
+	num, err := s.conn.Write(buf)
+	return num, err
+}
+
+func (s *Server) CasNewPacket(data []byte, raddr net.Addr) {
+	srvParser.in <- newPacket(data, raddr)
+}
+
+func (s *Server) GetCasRegResponse(tx *Transaction) (*Response, error) {
+	response := tx.GetResponse()
+	if response == nil {
+		return nil, utils.NewError(nil, "response timeout, tx key:", tx.Key())
+	}
+	return response, nil
+}*/

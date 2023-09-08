@@ -65,6 +65,41 @@ type Devices struct {
 	source net.Addr     `gorm:"-"`
 }
 
+// DeviceItem 设备明细结构
+type DeviceItem struct {
+	// DeviceID 设备编号
+	DeviceID string `xml:"DeviceID" bson:"deviceid" json:"deviceid"`
+	// Name 设备名称
+	Name         string `xml:"Name" bson:"name" json:"name"`
+	Manufacturer string `xml:"Manufacturer" bson:"manufacturer" json:"manufacturer"`
+	Model        string `xml:"Model" bson:"model" json:"model"`
+	Owner        string `xml:"Owner" bson:"owner" json:"owner"`
+	CivilCode    string `xml:"CivilCode" bson:"civilcode" json:"civilcode"`
+	// Address ip地址
+	Address  string `xml:"Address" bson:"address" json:"address"`
+	Parental int    `xml:"Parental" bson:"parental" json:"parental"`
+	ParentID string `xml:"ParentID" bson:"parentid" json:"parentid"`
+	// SafetyWay   int    `xml:"SafetyWay" bson:"safetyway" json:"safetyway"`
+	RegisterWay int    `xml:"RegisterWay" bson:"registerway" json:"registerway"`
+	Secrecy     int    `xml:"Secrecy" bson:"secrecy" json:"secrecy"`
+	StreamNum   int    `xml:"StreamNum" bson:"streamnum" json:"streamnum"`
+	IPAddress   string `xml:"IPAddress" bson:"ipaddress" json:"ipaddress"`
+	Port        int    `xml:"Port" bson:"port" json:"port"`
+	// Status 状态  on 在线
+	Status        string `xml:"Status" bson:"status" json:"status"`
+	PTZType       int    `xml:"Info>PTZType" bson:"ptztype" json:"ptztype"`
+	DownloadSpeed string `xml:"Info>DownloadSpeed" bson:"downloadspeed" json:"downloadspeed"`
+	// PDID 所属用户id
+	PDID string `bson:"pdid" json:"pdid"`
+	// Active 最后活跃时间
+	Active int64  `bson:"active" json:"active"`
+	URIStr string `bson:"uri" json:"uri"`
+
+	addr *sip.Address `bson:"-"`
+	// 通道号 int
+	ChannelCode int `bson:"-"`
+}
+
 // Channels 摄像头通道信息
 type Channels struct {
 	db.DBModel

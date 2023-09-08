@@ -1,29 +1,46 @@
 package m
 
 import (
-	"net"
-	"strings"
-	"time"
-
 	"github.com/panjjo/gosip/db"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
+	"net"
+	"strings"
+	"time"
 )
 
-// Config Config
+// Config 根配置
 type Config struct {
 	MOD       string            `json:"mod" yaml:"mod" mapstructure:"mod"`
 	DB        db.Config         `json:"database" yaml:"database" mapstructure:"database"`
 	LogLevel  string            `json:"logger" yaml:"logger" mapstructure:"logger"`
-	UDP       string            `json:"udp" yaml:"udp" mapstructure:"udp"`
 	API       string            `json:"api" yaml:"api" mapstructure:"api"`
 	Secret    string            `json:"secret" yaml:"secret" mapstructure:"secret"`
 	Media     MediaServer       `json:"media" yaml:"media" mapstructure:"media"`
 	Stream    Stream            `json:"stream" yaml:"stream" mapstructure:"stream"`
 	Record    RecordCfg         `json:"record" yaml:"record" mapstructure:"record"`
 	GB28181   *SysInfo          `json:"gb28181" yaml:"gb28181" mapstructure:"gb28181"`
+	Cascade   Cascade           `json:"cascade" yaml:"cascade" mapstructure:"cascade"`
 	Notify    map[string]string `json:"notify" yaml:"notify" mapstructure:"notify"`
 	NotifyMap map[string]string
+}
+
+// Cascade 上级平台信息配置
+type Cascade struct {
+	db.DBModel
+	SUDP     string `json:"sudp" yaml:"sudp"`
+	SID      string `json:"sid" yaml:"sid"`
+	SRegion  string `json:"sregion" yaml:"sregion"`
+	SPWD     string `json:"spwd" yaml:"spwd"`
+	LUDP     string `json:"ludp" yaml:"ludp"`
+	LAddr    string `json:"laddr" yaml:"laddr"`
+	LTcp     string `json:"ltcp" yaml:"ltcp"`
+	Run      int    `json:"run" yaml:"run"`
+	Sport    int    `json:"sport" yaml:"sport"`
+	Eport    int    `json:"eport" yaml:"eport"`
+	CityID   string `json:"cityid" yaml:"cityid"`
+	CityName string `json:"cityname" yaml:"cityname"`
+	CataMod  int    `json:"catamod" yaml:"catamod"`
 }
 
 // 录像相关配置
@@ -41,6 +58,7 @@ type Stream struct {
 
 // MediaServer ZLMediaKit相关配置
 type MediaServer struct {
+	db.DBModel
 	RESTFUL string `json:"restful" yaml:"restful" mapstructure:"restful"`
 	HTTP    string `json:"http" yaml:"http" mapstructure:"http"`
 	WS      string `json:"ws" yaml:"ws" mapstructure:"ws"`
@@ -53,6 +71,7 @@ type MediaServer struct {
 // GB28181相关配置
 type SysInfo struct {
 	db.DBModel
+	UDP string `json:"udp" yaml:"udp" mapstructure:"udp" gorm:"addr"`
 	// Region 当前域
 	Region string `json:"region"   yaml:"region" mapstructure:"region"`
 	// CID 通道id固定头部

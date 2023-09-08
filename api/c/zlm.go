@@ -295,20 +295,6 @@ func ZLMWebAPI(c *gin.Context) {
 	}
 
 	switch method {
-	case "getServerConfig":
-		logrus.Infoln("getServerConfig")
-		response, err := sipapi.ZlmGetServerConfig(req)
-		if err != nil {
-			logrus.Infoln("get getServerConfig err")
-		}
-		c.JSON(http.StatusOK, response)
-	case "getAllSession":
-		logrus.Infoln("getAllSession")
-		response, err := sipapi.ZlmGetAllSession(req)
-		if err != nil {
-			logrus.Infoln("get getAllSession err")
-		}
-		c.JSON(http.StatusOK, response)
 	case "getApiList":
 		logrus.Infoln("getApiList")
 		response, err := sipapi.ZlmGetApiList(req)
@@ -316,39 +302,11 @@ func ZLMWebAPI(c *gin.Context) {
 			logrus.Infoln("get getApiList err")
 		}
 		c.JSON(http.StatusOK, response)
-	case "getMediaList":
-		logrus.Infoln("getMediaList")
-		response, err := sipapi.ZlmGetMediaList(req)
+	case "version":
+		logrus.Infoln("version")
+		response, err := sipapi.ZlmVersion(req)
 		if err != nil {
-			logrus.Infoln("get getMediaList err")
-		}
-		c.JSON(http.StatusOK, response)
-	case "getThreadsLoad":
-		logrus.Infoln("getThreadsLoad")
-		response, err := sipapi.ZlmGetThreadsLoad(req)
-		if err != nil {
-			logrus.Infoln("get getThreadsLoad err")
-		}
-		c.JSON(http.StatusOK, response)
-	case "getWorkThreadsLoad":
-		logrus.Infoln("getWorkThreadsLoad")
-		response, err := sipapi.ZlmGetWorkThreadsLoad(req)
-		if err != nil {
-			logrus.Infoln("get getWorkThreadsLoad err")
-		}
-		c.JSON(http.StatusOK, response)
-	case "getSnap":
-		logrus.Infoln("getSnap")
-		response, err := sipapi.ZlmGetSnap(req)
-		if err != nil {
-			logrus.Infoln("get getSnap err")
-		}
-		c.JSON(http.StatusOK, response)
-	case "getMediaInfo":
-		logrus.Infoln("getMediaInfo")
-		response, err := sipapi.ZlmGetMediaInfo(req)
-		if err != nil {
-			logrus.Infoln("get zlm getMediaInfo err")
+			logrus.Infoln("get version err")
 		}
 		c.JSON(http.StatusOK, response)
 	case "restartServer":
@@ -358,46 +316,39 @@ func ZLMWebAPI(c *gin.Context) {
 			logrus.Infoln("get restartServer err")
 		}
 		c.JSON(http.StatusOK, response)
-	case "addFFmpegSource":
-		logrus.Infoln("addFFmpegSource")
-		response, err := sipapi.ZlmAddFFmpegSource(req)
+	case "getStatistic":
+		logrus.Infoln("getStatistic")
+		response, err := sipapi.ZlmGetStatistic(req)
 		if err != nil {
-			logrus.Infoln("get addFFmpegSource err")
+			logrus.Infoln("get getStatistic err")
 		}
 		c.JSON(http.StatusOK, response)
-	case "addStreamProxy":
-		logrus.Infoln("addStreamProxy")
-		response, err := sipapi.ZlmAddStreamProxy(req)
+	case "downloadBin": //功能未知
+		logrus.Infoln("downloadBin")
+		response, err := sipapi.ZlmDownloadBin(req)
 		if err != nil {
-			logrus.Infoln("get addStreamProxy err")
+			logrus.Infoln("get downloadBin err")
 		}
 		c.JSON(http.StatusOK, response)
-	case "close_stream":
-		logrus.Infoln("close_stream")
-		response, err := sipapi.ZlmCloseStream(req)
+	case "getServerConfig":
+		logrus.Infoln("getServerConfig")
+		response, err := sipapi.ZlmGetServerConfig(req)
 		if err != nil {
-			logrus.Infoln("get zlm close_stream err")
+			logrus.Infoln("get getServerConfig err")
 		}
 		c.JSON(http.StatusOK, response)
-	case "close_streams":
-		logrus.Infoln("close_streams")
-		response, err := sipapi.ZlmCloseStreams(req)
+	case "setServerConfig":
+		logrus.Infoln("setServerConfig")
+		response, err := sipapi.ZlmSetServerConfig(req)
 		if err != nil {
-			logrus.Infoln("get close_streams err")
+			logrus.Infoln("get setServerConfig err")
 		}
 		c.JSON(http.StatusOK, response)
-	case "delFFmpegSource":
-		logrus.Infoln("delFFmpegSource")
-		response, err := sipapi.ZlmDelFFmpegSource(req)
+	case "getAllSession":
+		logrus.Infoln("getAllSession")
+		response, err := sipapi.ZlmGetAllSession(req)
 		if err != nil {
-			logrus.Infoln("get delFFmpegSource err")
-		}
-		c.JSON(http.StatusOK, response)
-	case "delStreamProxy":
-		logrus.Infoln("delStreamProxy")
-		response, err := sipapi.ZlmDelStreamProxy(req)
-		if err != nil {
-			logrus.Infoln("get delStreamProxy err")
+			logrus.Infoln("get getAllSession err")
 		}
 		c.JSON(http.StatusOK, response)
 	case "kick_session":
@@ -414,95 +365,88 @@ func ZLMWebAPI(c *gin.Context) {
 			logrus.Infoln("get kick_sessions err")
 		}
 		c.JSON(http.StatusOK, response)
-	case "setServerConfig":
-		logrus.Infoln("setServerConfig")
-		response, err := sipapi.ZlmSetServerConfig(req)
+	case "getThreadsLoad":
+		logrus.Infoln("getThreadsLoad")
+		response, err := sipapi.ZlmGetThreadsLoad(req)
 		if err != nil {
-			logrus.Infoln("get setServerConfig err")
+			logrus.Infoln("get getThreadsLoad err")
 		}
 		c.JSON(http.StatusOK, response)
-	case "isMediaOnline":
+	case "getWorkThreadsLoad":
+		logrus.Infoln("getWorkThreadsLoad")
+		response, err := sipapi.ZlmGetWorkThreadsLoad(req)
+		if err != nil {
+			logrus.Infoln("get getWorkThreadsLoad err")
+		}
+		c.JSON(http.StatusOK, response)
+	case "getMediaList":
+		logrus.Infoln("getMediaList")
+		response, err := sipapi.ZlmGetMediaList(req)
+		if err != nil {
+			logrus.Infoln("get getMediaList err")
+		}
+		c.JSON(http.StatusOK, response)
+	case "getMediaInfo":
+		logrus.Infoln("getMediaInfo")
+		response, err := sipapi.ZlmGetMediaInfo(req)
+		if err != nil {
+			logrus.Infoln("get zlm getMediaInfo err")
+		}
+		c.JSON(http.StatusOK, response)
+	case "isMediaOnline": //已过期，替代getMediaList
 		logrus.Infoln("isMediaOnline")
 		response, err := sipapi.ZlmIsMediaOnline(req)
 		if err != nil {
 			logrus.Infoln("get isMediaOnline err")
 		}
 		c.JSON(http.StatusOK, response)
-	case "getRtpInfo":
-		logrus.Infoln("getRtpInfo")
-		response, err := sipapi.ZlmGetRtpInfo(req)
+	case "getMediaPlayerList":
+		logrus.Infoln("getMediaPlayerList")
+		response, err := sipapi.ZlmGetMediaPlayerList(req)
 		if err != nil {
-			logrus.Infoln("get getRtpInfo err")
+			logrus.Infoln("get zlm getMediaPlayerList err")
 		}
 		c.JSON(http.StatusOK, response)
-	case "getMp4RecordFile":
-		logrus.Infoln("getMp4RecordFile")
-		response, err := sipapi.ZlmGetMp4RecordFile(req)
+	case "addFFmpegSource":
+		logrus.Infoln("addFFmpegSource")
+		response, err := sipapi.ZlmAddFFmpegSource(req)
 		if err != nil {
-			logrus.Infoln("get getMp4RecordFile err")
+			logrus.Infoln("get addFFmpegSource err")
 		}
 		c.JSON(http.StatusOK, response)
-	case "startRecord":
-		logrus.Infoln("startRecord")
-		response, err := sipapi.ZlmStartRecord(req)
+	case "delFFmpegSource":
+		logrus.Infoln("delFFmpegSource")
+		response, err := sipapi.ZlmDelFFmpegSource(req)
 		if err != nil {
-			logrus.Infoln("get startRecord err")
+			logrus.Infoln("get delFFmpegSource err")
 		}
 		c.JSON(http.StatusOK, response)
-	case "stopRecord":
-		logrus.Infoln("stopRecord")
-		response, err := sipapi.ZlmStopRecord(req)
+	case "addStreamProxy":
+		logrus.Infoln("addStreamProxy")
+		response, err := sipapi.ZlmAddStreamProxy(req)
 		if err != nil {
-			logrus.Infoln("get stopRecord err")
+			logrus.Infoln("get addStreamProxy err")
 		}
 		c.JSON(http.StatusOK, response)
-	case "getRecordStatus":
-		logrus.Infoln("getRecordStatus")
-		response, err := sipapi.ZlmGetRecordStatus(req)
+	case "close_stream": //已过期，替代close_streams
+		logrus.Infoln("close_stream")
+		response, err := sipapi.ZlmCloseStream(req)
 		if err != nil {
-			logrus.Infoln("get getRecordStatus err")
+			logrus.Infoln("get close_stream err")
 		}
 		c.JSON(http.StatusOK, response)
-	case "openRtpServer":
-		logrus.Infoln("openRtpServer")
-		response, err := sipapi.ZlmOpenRtpServer(req)
+	case "close_streams":
+		logrus.Infoln("close_streams")
+		response, err := sipapi.ZlmCloseStreams(req)
 		if err != nil {
-			logrus.Infoln("get openRtpServer err")
+			logrus.Infoln("get close_streams err")
 		}
 		c.JSON(http.StatusOK, response)
-	case "closeRtpServer":
-		logrus.Infoln("closeRtpServer")
-		response, err := sipapi.ZlmCloseRtpServer(req)
+	case "delStreamProxy":
+		logrus.Infoln("delStreamProxy")
+		response, err := sipapi.ZlmDelStreamProxy(req)
 		if err != nil {
-			logrus.Infoln("get closeRtpServer err")
-		}
-		c.JSON(http.StatusOK, response)
-	case "listRtpServer":
-		logrus.Infoln("listRtpServer")
-		response, err := sipapi.ZlmListRtpServer(req)
-		if err != nil {
-			logrus.Infoln("get listRtpServer err")
-		}
-		c.JSON(http.StatusOK, response)
-	case "startSendRtp":
-		logrus.Infoln("startSendRtp")
-		response, err := sipapi.ZlmStartSendRtp(req)
-		if err != nil {
-			logrus.Infoln("get startSendRtp err")
-		}
-		c.JSON(http.StatusOK, response)
-	case "stopSendRtp":
-		logrus.Infoln("stopSendRtp")
-		response, err := sipapi.ZlmStopSendRtp(req)
-		if err != nil {
-			logrus.Infoln("get stopSendRtp err")
-		}
-		c.JSON(http.StatusOK, response)
-	case "getStatistic":
-		logrus.Infoln("getStatistic")
-		response, err := sipapi.ZlmGetStatistic(req)
-		if err != nil {
-			logrus.Infoln("get getStatistic err")
+			logrus.Infoln("get delStreamProxy err")
 		}
 		c.JSON(http.StatusOK, response)
 	case "addStreamPusherProxy":
@@ -519,18 +463,18 @@ func ZLMWebAPI(c *gin.Context) {
 			logrus.Infoln("get delStreamPusherProxy err")
 		}
 		c.JSON(http.StatusOK, response)
-	case "version":
-		logrus.Infoln("version")
-		response, err := sipapi.ZlmVersion(req)
+	case "getSnap":
+		logrus.Infoln("getSnap")
+		response, err := sipapi.ZlmGetSnap(req)
 		if err != nil {
-			logrus.Infoln("get version err")
+			logrus.Infoln("get getSnap err")
 		}
 		c.JSON(http.StatusOK, response)
-	case "getMediaPlayerList":
-		logrus.Infoln("getMediaPlayerList")
-		response, err := sipapi.ZlmGetMediaPlayerList(req)
+	case "listRtpServer":
+		logrus.Infoln("listRtpServer")
+		response, err := sipapi.ZlmListRtpServer(req)
 		if err != nil {
-			logrus.Infoln("get zlm getMediaPlayerList err")
+			logrus.Infoln("get listRtpServer err")
 		}
 		c.JSON(http.StatusOK, response)
 	case "connectRtpServer":
@@ -540,25 +484,46 @@ func ZLMWebAPI(c *gin.Context) {
 			logrus.Infoln("get connectRtpServer err")
 		}
 		c.JSON(http.StatusOK, response)
-	case "deleteRecordDirectory":
-		logrus.Infoln("deleteRecordDirectory")
-		response, err := sipapi.ZlmDeleteRecordDirectory(req)
+	case "openRtpServer":
+		logrus.Infoln("openRtpServer")
+		response, err := sipapi.ZlmOpenRtpServer(req)
 		if err != nil {
-			logrus.Infoln("get deleteRecordDirectory err")
+			logrus.Infoln("get openRtpServer err")
 		}
 		c.JSON(http.StatusOK, response)
-	case "downloadBin":
-		logrus.Infoln("downloadBin")
-		response, err := sipapi.ZlmDownloadBin(req)
+	case "closeRtpServer":
+		logrus.Infoln("closeRtpServer")
+		response, err := sipapi.ZlmCloseRtpServer(req)
 		if err != nil {
-			logrus.Infoln("get downloadBin err")
+			logrus.Infoln("get closeRtpServer err")
 		}
 		c.JSON(http.StatusOK, response)
-	case "isRecording":
-		logrus.Infoln("isRecording")
-		response, err := sipapi.ZlmIsRecording(req)
+	case "startSendRtp":
+		logrus.Infoln("startSendRtp")
+		response, err := sipapi.ZlmStartSendRtp(req)
 		if err != nil {
-			logrus.Infoln("get isRecording err")
+			logrus.Infoln("get startSendRtp err")
+		}
+		c.JSON(http.StatusOK, response)
+	case "getRtpInfo":
+		logrus.Infoln("getRtpInfo")
+		response, err := sipapi.ZlmGetRtpInfo(req)
+		if err != nil {
+			logrus.Infoln("get getRtpInfo err")
+		}
+		c.JSON(http.StatusOK, response)
+	case "stopSendRtp":
+		logrus.Infoln("stopSendRtp")
+		response, err := sipapi.ZlmStopSendRtp(req)
+		if err != nil {
+			logrus.Infoln("get stopSendRtp err")
+		}
+		c.JSON(http.StatusOK, response)
+	case "startSendRtpPassive":
+		logrus.Infoln("startSendRtpPassive")
+		response, err := sipapi.ZlmStartSendRtpPassive(req)
+		if err != nil {
+			logrus.Infoln("get startSendRtpPassive err")
 		}
 		c.JSON(http.StatusOK, response)
 	case "pauseRtpCheck":
@@ -575,6 +540,34 @@ func ZLMWebAPI(c *gin.Context) {
 			logrus.Infoln("get resumeRtpCheck err")
 		}
 		c.JSON(http.StatusOK, response)
+	case "startRecord":
+		logrus.Infoln("startRecord")
+		response, err := sipapi.ZlmStartRecord(req)
+		if err != nil {
+			logrus.Infoln("get startRecord err")
+		}
+		c.JSON(http.StatusOK, response)
+	case "getMp4RecordFile":
+		logrus.Infoln("getMp4RecordFile")
+		response, err := sipapi.ZlmGetMp4RecordFile(req)
+		if err != nil {
+			logrus.Infoln("get getMp4RecordFile err")
+		}
+		c.JSON(http.StatusOK, response)
+	case "getRecordStatus":
+		logrus.Infoln("getRecordStatus")
+		response, err := sipapi.ZlmGetRecordStatus(req)
+		if err != nil {
+			logrus.Infoln("get getRecordStatus err")
+		}
+		c.JSON(http.StatusOK, response)
+	case "isRecording":
+		logrus.Infoln("isRecording")
+		response, err := sipapi.ZlmIsRecording(req)
+		if err != nil {
+			logrus.Infoln("get isRecording err")
+		}
+		c.JSON(http.StatusOK, response)
 	case "seekRecordStamp":
 		logrus.Infoln("seekRecordStamp")
 		response, err := sipapi.ZlmSeekRecordStamp(req)
@@ -589,11 +582,18 @@ func ZLMWebAPI(c *gin.Context) {
 			logrus.Infoln("get setRecordSpeed err")
 		}
 		c.JSON(http.StatusOK, response)
-	case "startSendRtpPassive":
-		logrus.Infoln("startSendRtpPassive")
-		response, err := sipapi.ZlmStartSendRtpPassive(req)
+	case "stopRecord":
+		logrus.Infoln("stopRecord")
+		response, err := sipapi.ZlmStopRecord(req)
 		if err != nil {
-			logrus.Infoln("get startSendRtpPassive err")
+			logrus.Infoln("get stopRecord err")
+		}
+		c.JSON(http.StatusOK, response)
+	case "deleteRecordDirectory":
+		logrus.Infoln("deleteRecordDirectory")
+		response, err := sipapi.ZlmDeleteRecordDirectory(req)
+		if err != nil {
+			logrus.Infoln("get deleteRecordDirectory err")
 		}
 		c.JSON(http.StatusOK, response)
 	default:

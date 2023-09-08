@@ -3,8 +3,10 @@ package sipapi
 import (
 	"errors"
 	"fmt"
+	"github.com/panjjo/gosip/db"
 	"net/http"
 	"sort"
+	"strconv"
 	"sync"
 	"time"
 
@@ -88,7 +90,10 @@ type recordList struct {
 }
 
 // 当前获取目录文件设备集合
-var _recordList *sync.Map
+var (
+	_recordList *sync.Map
+	nvrRecord   *sync.Map
+)
 
 // 取得设备发来的历史列表
 func sipMessageRecordInfo(u Devices, body []byte) error {
@@ -232,4 +237,77 @@ func transRecordList(data [][]int64) Records {
 	}
 	res.Data = resData
 	return res
+}
+
+// MessageRecordInfoRequest 目录列表
+type MessageRecordInfoRequest struct {
+	CmdType   string `xml:"CmdType"`
+	SN        int    `xml:"SN"`
+	DeviceID  string `xml:"DeviceID"`
+	StartTime string `xml:"StartTime"`
+	EndTime   string `xml:"EndTime"`
+	Type      string `xml:"Type"`
+	s, e      int64
+	num       int
+}
+
+const (
+	userTB   = "users"   // 用户表 NVR表
+	deviceTB = "devices" // 设备表 摄像头
+)
+
+var sendUp bool // 是否向上级发送
+
+// 获取录像文件列表
+func sipCasRecordList(u Devices, did, body string) error {
+	device := DeviceItem{}
+	devices := Devices{}
+
+	if _, err := db.FindT(db.DBClient, new(Devices), &devices, db.M{"deviceid": did}, "", 0, 100, false); err != nil {
+		return err
+	}
+	if time.Now().Unix()-device.Active > 30*60 {
+		return errors.New("device is offline")
+	}
+	user := Devices{}
+	user, ok := _activeDevices.Get(device.PDID)
+	if !ok {
+		return errors.New("nvr is offline")
+	}
+	// 解析消息体
+	_ = parseRecordInfoRequest(body)
+
+	hb := sip.NewHeaderBuilder().SetTo(user.addr).SetFrom(_serverDevices.addr).AddVia(&sip.ViaHop{
+		Params: sip.NewParams().Add("branch", sip.String{Str: sip.GenerateBranch()}),
+	}).SetContentType(&sip.ContentTypeXML).SetMethod(sip.MESSAGE)
+	req := sip.NewRequest("", sip.MESSAGE, user.addr.URI, sip.DefaultSipVersion, hb.Build(), []byte(body))
+	req.SetDestination(user.source)
+	tx, err := srv.Request(req)
+	logrus.Info("cas record request to device")
+	if err != nil {
+		return err
+	}
+	res := tx.GetResponse()
+	if res == nil {
+		logrus.Errorf("sipCasRecordList response is nil")
+		return errors.New("response is nil")
+	}
+	sendUp = true
+
+	return nil
+}
+
+func parseRecordInfoRequest(body string) error {
+	message := &MessageRecordInfoRequest{}
+	if err := utils.XMLDecode([]byte(body), message); err != nil {
+		logrus.Errorf("parseRecordInfoRequest Unmarshal xml err:%s, body:%s", err.Error(), body)
+		return err
+	}
+	s, _ := time.ParseInLocation("2006-01-02T15:04:05", message.StartTime, time.Local)
+	e, _ := time.ParseInLocation("2006-01-02T15:04:05", message.EndTime, time.Local)
+	message.s = s.Unix()
+	message.e = e.Unix()
+	key := message.DeviceID + "-" + strconv.Itoa(message.SN)
+	nvrRecord.Store(key, *message)
+	return nil
 }
